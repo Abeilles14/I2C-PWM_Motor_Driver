@@ -6,3 +6,13 @@ def getCounterValues(delay, dc):
     off_count = on_count + round(dc*COUNTER_SIZE/100)
 
     return on_count, off_count
+
+# calculate duty cycle from angle
+def getActuatorDCfromLength(len):
+    dc = 30 + round(len*DC_RANGE/STROKE)
+    return dc
+
+# TODO
+def getMotorDCfromAngle(angle):
+
+    return
