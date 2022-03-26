@@ -53,6 +53,9 @@ class PWM :
     def setPWMCounters(self, reg, bus, on, off):
         """Sets a single PWM channel"""
 
+        if self.debug:
+            print("Setting PWM at reg {} bus {}".format(reg, bus))
+
         self.i2c.write8(reg[0] + 4*bus, on & 0xFF)
         self.i2c.write8(reg[1] + 4*bus, on >> 8)
         self.i2c.write8(reg[2] + 4*bus, off & 0xFF)
