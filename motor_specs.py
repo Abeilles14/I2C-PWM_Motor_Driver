@@ -6,7 +6,7 @@
         "stroke_length": 140,   # mm
     },
     "Pololu25D": {
-        "frequency": 5,
+        "frequency": 5, # 300 rpm
         "dc range": 0,
     }
 }
