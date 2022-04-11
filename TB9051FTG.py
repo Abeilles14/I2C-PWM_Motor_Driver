@@ -4,7 +4,7 @@ from constants import *
 from utils import getCounterValues
 import odroid_wiringpi as wpi
 
-class TB9051FTG:
+class SingleTB9051FTG:
     # inputs = [encA, encB]
     # outputs = [ENB, PWM1, PWM2]
     def __init__(self, channel, freq, pin_in, pin_out, debug=False):
