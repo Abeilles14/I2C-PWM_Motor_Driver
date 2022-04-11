@@ -3,7 +3,7 @@ from constants import *
 from motor_model import Motor
 
 def main():
-    FREQUENCY = 5 # Hz
+    FREQUENCY = 500 # Hz
     pwm = PWM(address=I2C_CHIP, busnum=I2C_BUS,debug=True)
     pwm.setPWMFreq(FREQUENCY)
 
@@ -15,11 +15,13 @@ def main():
 
     # actuonixL16.setPWM(pwm, dutycycle=60)
     # actuonixPQ12.setPWM(pwm, dutycycle=30)
-
-    pololu = Motor(channel=CHANNEL2, freq=FREQUENCY)
-    pololu.reset(pwm)
-    pololu.setPWM(pwm, dutycycle=60)
-
+    
+    #### WINCH MOTOR ####
+    # GOING FORWARD: PWM1 H PWM2 L EN H ENB L
+    # setup up pwm1 and pwm2
+    pololu1 = Motor(channel=CHANNEL2, freq=FREQUENCY)
+    pololu1.reset(pwm)
+    pololu1.setPWM(pwm, dutycycle=30)
 
 if __name__ == "__main__":
     main()
