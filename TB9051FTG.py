@@ -4,7 +4,7 @@ from constants import *
 from utils import getCounterValues
 import odroid_wiringpi as wpi
 
-class SingleTB9051FTG:
+class TB9051FTG:
     # inputs = [encA, encB]
     # outputs = [ENB, PWM1, PWM2]
     def __init__(self, channel, freq, pin_in, pin_out, debug=False):
@@ -15,7 +15,7 @@ class SingleTB9051FTG:
 
         # odroid - motor/driver input and output pins
         self.pin_in = pin_in    # encA encB
-        self.pin_out = pin_out  # enb pwm1 pwm2
+        self.pin_out = pin_out  # dir en enb # en pwm1 pwm2
 
     def reset(self, pwm):
         # reset PCA9685
@@ -42,16 +42,16 @@ class SingleTB9051FTG:
         wpi.digitalWrite(self.pin_out[2], 0)    # PWM2 = 0
 
     def forward(self, pwm, dutycycle):
-        wpi.digitalWrite(self.pin_out[0], 0)    # ENB = 0
-        wpi.digitalWrite(self.pin_out[1], 1)    # PWM1 = 1
-        wpi.digitalWrite(self.pin_out[2], 0)    # PWM2 = 0
+        wpi.digitalWrite(self.pin_out[0], 1)    # dir 1 # ENB = 0
+        wpi.digitalWrite(self.pin_out[1], 1)    # en 1 # PWM1 = 1
+        wpi.digitalWrite(self.pin_out[2], 0)    # enb 0 # PWM2 = 0
 
         self.setPWM(pwm, dutycycle)
     
     def backward(self, pwm, dutycycle):
-        wpi.digitalWrite(self.pin_out[0], 0)    # ENB = 0
-        wpi.digitalWrite(self.pin_out[1], 0)    # PWM1 = 0
-        wpi.digitalWrite(self.pin_out[2], 1)    # PWM2 = 1
+        wpi.digitalWrite(self.pin_out[0], 0)    # dir 0 # ENB = 0
+        wpi.digitalWrite(self.pin_out[1], 1)    # en 1 # PWM1 = 0
+        wpi.digitalWrite(self.pin_out[2], 0)    # enb 0 # PWM2 = 1
 
         self.setPWM(pwm, dutycycle)
     

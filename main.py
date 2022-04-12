@@ -1,9 +1,13 @@
 from pwm import PWM
 from constants import *
-from TB9051FTG import SingleTB9051FTG
+from motor_specs import MOTORS
+from TB9051FTG import TB9051FTG
 from PCA9685 import PCA9685
+import odroid_wiringpi as wpi
 
 def main():
+    init_gpio()
+    
     pwm = PWM(address=I2C_CHIP, busnum=I2C_BUS,debug=True)
 
     actuonixL16_1 = PCA9685(channel=CHANNEL0, freq=300)
@@ -12,14 +16,14 @@ def main():
     hext900_1 = PCA9685(channel=CHANNEL1, freq=50)
     hext900_1.reset(pwm)
     
-    #### WINCH MOTOR ####
-    pololu_1 = TB9051FTG(channel=CHANNEL2, freq=5, pin_in=POLOLU1_ENC, pin_out=TB9051FTG_PINS)
+    #### POLOLU 1 ####
+    pololu_1 = TB9051FTG(channel=CHANNEL4, freq=5, pin_in=MOTORS["pololu1"]["enc_pins"], pin_out=MOTORS["pololu1"]["driver_pins"])
     pololu_1.reset(pwm)
 
     while True:
         motor = input("Enter p for pololu, a for actuator, h for hextronik: ")
         if motor == "p":
-            FREQUENCY=5
+            FREQUENCY=300
             pwm.setPWMFreq(FREQUENCY)
             hext900_1.reset(pwm)
             actuonixL16_1.reset(pwm)
@@ -28,10 +32,10 @@ def main():
 
             if direction == "f":
                 print("Going forward")
-                pololu_1.forward(pwm, dutycycle=30)
+                pololu_1.forward(pwm, dutycycle=60)
             elif direction == "b":
                 print("Going Backward")
-                pololu_1.backward(pwm, dutycycle=30)
+                pololu_1.backward(pwm, dutycycle=60)
             elif direction == "s":
                 print("Stopping")
                 pololu_1.stop(pwm)
@@ -63,6 +67,21 @@ def main():
             elif direction == "b":
                 print("Going Backward")
                 hext900_1.setPWM(pwm, dutycycle=11)
+
+def init_gpio():
+    # setup wpi
+    wpi.wiringPiSetup()
+    
+    # set pin mode
+    for pin in GPIO_IN:
+        wpi.pinMode(pin, IN)
+
+    for pin in GPIO_OUT:
+        wpi.pinMode(pin, OUT)
+
+        # init out pins low
+        wpi.digitalWrite(pin, 0)
+
 
 if __name__ == "__main__":
     main()
