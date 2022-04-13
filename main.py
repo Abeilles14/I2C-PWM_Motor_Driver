@@ -9,24 +9,26 @@ def main():
     init_gpio()
     
     pwm = PWM(address=I2C_CHIP, busnum=I2C_BUS,debug=True)
+    FREQUENCY=300
+    pwm.setPWMFreq(FREQUENCY)
 
-    actuonixL16_1 = PCA9685(channel=CHANNEL0, freq=300)
-    actuonixL16_1.reset(pwm)
+    actuonix_1 = PCA9685(channel=CHANNEL0, freq=300)
+    actuonix_1.reset(pwm)
     
-    hext900_1 = PCA9685(channel=CHANNEL1, freq=50)
-    hext900_1.reset(pwm)
+    turnigy_1 = PCA9685(channel=CHANNEL12, freq=300)
+    turnigy_1.reset(pwm)
     
-    #### POLOLU 1 ####
-    pololu_1 = TB9051FTG(channel=CHANNEL4, freq=5, pin_in=MOTORS["pololu1"]["enc_pins"], pin_out=MOTORS["pololu1"]["driver_pins"])
+    pololu_0 = TB9051FTG(channel=CHANNEL0, freq=300, pin_in=MOTORS["pololu_0"]["enc_pins"], pin_out=MOTORS["pololu_0"]["driver_pins"], single=True)
+    pololu_0.reset(pwm)
+
+    pololu_1 = TB9051FTG(channel=CHANNEL4, freq=300, pin_in=MOTORS["pololu_1"]["enc_pins"], pin_out=MOTORS["pololu_1"]["driver_pins"])
     pololu_1.reset(pwm)
 
     while True:
-        motor = input("Enter p for pololu, a for actuator, h for hextronik: ")
+        motor = input("Enter p for pololu, a for actuator, t for turnigy: ")
         if motor == "p":
-            FREQUENCY=300
-            pwm.setPWMFreq(FREQUENCY)
-            hext900_1.reset(pwm)
-            actuonixL16_1.reset(pwm)
+            freq = input("Enter frequency: ")
+            pwm.setPWMFreq(int(freq))
 
             direction = input("Enter f for fwd, b for bkwd, s for stop: ")
 
@@ -40,33 +42,23 @@ def main():
                 print("Stopping")
                 pololu_1.stop(pwm)
         elif motor == "a":
-            FREQUENCY=300
-            pwm.setPWMFreq(FREQUENCY)
-            hext900_1.reset(pwm)
-            pololu_1.reset(pwm)
-
             direction = input("Enter o for out, i for in: ")
 
             if direction == "i":
                 print("Going in")
-                actuonixL16_1.setPWM(pwm, dutycycle=30)
+                actuonix_1.setPWM(pwm, dutycycle=30)
             elif direction == "o":
                 print("Going out")
-                actuonixL16_1.setPWM(pwm, dutycycle=60)
-        elif motor == "h":
-            FREQUENCY=50
-            pwm.setPWMFreq(FREQUENCY)
-            pololu_1.reset(pwm)
-            actuonixL16_1.reset(pwm)
-
+                actuonix_1.setPWM(pwm, dutycycle=60)
+        elif motor == "t":
             direction = input("Enter f for fwd, b for bkwd: ")
 
             if direction == "f":
                 print("Going forward")
-                hext900_1.setPWM(pwm, dutycycle=3)
+                turnigy_1.setPWM(pwm, dutycycle=28)
             elif direction == "b":
                 print("Going Backward")
-                hext900_1.setPWM(pwm, dutycycle=11)
+                turnigy_1.setPWM(pwm, dutycycle=64)
 
 def init_gpio():
     # setup wpi
