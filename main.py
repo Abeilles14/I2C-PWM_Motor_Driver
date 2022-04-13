@@ -38,11 +38,16 @@ def main():
     pololu_1 = TB9051FTG(channel=CHANNEL4, freq=300, pin_in=MOTORS["pololu_1"]["enc_pins"], pin_out=MOTORS["pololu_1"]["driver_pins"])
     pololu_1.reset(pwm)
 
+
+    # wpi.wiringPiSetupGpio()
+    # wpi.pinMode(5, wpi.GPIO.INPUT)
+    wpi.pullUpDnControl(5, wpi.GPIO.PUD_UP)
+
     pos = 0
 
     while True:
         encA_pin = MOTORS["pololu_1"]["enc_pins"][0]
-        wpi.wiringPiISR(encA_pin, 1, readEncoder)  # pass a callback function
+        wpi.wiringPiISR(5, wpi.GPIO.INT_EDGE_BOTH, readEncoder)  # pass a callback function
         encA = wpi.digitalRead(MOTORS["pololu_1"]["enc_pins"][0])    # encA
         # encB = wpi.digitalRead(MOTORS["pololu_1"]["enc_pins"][1])    # encB
         print(pos, encA)
