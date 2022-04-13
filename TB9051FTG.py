@@ -40,37 +40,26 @@ class TB9051FTG:
             wpi.digitalWrite(pin, 0)
         
     def forward(self, pwm, dutycycle):
-        # single channel
+        wpi.digitalWrite(self.pin_out[0], 1)    # dir/pwm1 1
+        wpi.digitalWrite(self.pin_out[2], 0)    # enb 0
+
         if self.single:
-            wpi.digitalWrite(self.pin_out[0], 0)    # ENB 0
-            wpi.digitalWrite(self.pin_out[1], 1)    # PWM1 1
-            wpi.digitalWrite(self.pin_out[2], 0)    # PWM2 0
-        # dual channel
+            wpi.digitalWrite(self.pin_out[1], 0)    # en 1/pwm2 0
         else:
-            wpi.digitalWrite(self.pin_out[0], 1)    # dir 1
-            wpi.digitalWrite(self.pin_out[1], 1)    # en 1
-            wpi.digitalWrite(self.pin_out[2], 0)    # enb 0
+            wpi.digitalWrite(self.pin_out[1], 1)    # en 1/pwm2 0
 
         self.setPWM(pwm, dutycycle)
     
     def backward(self, pwm, dutycycle):
-        # single channel
-        if self.single:
-            wpi.digitalWrite(self.pin_out[0], 0)    # ENB 0
-            wpi.digitalWrite(self.pin_out[1], 0)    # PWM1 0
-            wpi.digitalWrite(self.pin_out[2], 1)    # PWM2 1
-        # dual channel
-        else:
-            wpi.digitalWrite(self.pin_out[0], 0)    # dir 0
-            wpi.digitalWrite(self.pin_out[1], 1)    # en 1
-            wpi.digitalWrite(self.pin_out[2], 0)    # enb 0
+        wpi.digitalWrite(self.pin_out[0], 0)    # dir/pwm1 0
+        wpi.digitalWrite(self.pin_out[1], 1)    # en/pwm2 1
+        wpi.digitalWrite(self.pin_out[2], 0)    # enb 0
 
         self.setPWM(pwm, dutycycle)
     
-    def stop(self, pwm):
-        wpi.digitalWrite(self.pin_out[0], 0)    # ENB = 0
-        wpi.digitalWrite(self.pin_out[1], 0)    # PWM1 = 0
-        wpi.digitalWrite(self.pin_out[2], 0)    # PWM2 = 0
+    def brake(self, pwm):
+        wpi.digitalWrite(self.pin_out[1], 1)    # en/ 1
+        wpi.digitalWrite(self.pin_out[2], 0)    # enb 0
 
         self.setPWM(pwm, 0)
 
