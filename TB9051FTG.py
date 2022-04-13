@@ -30,15 +30,6 @@ class TB9051FTG:
         if self.debug:
             print("Reseting TB9051FTG")
 
-        # setup wpi
-        wpi.wiringPiSetup()
-        # set pin mode and init
-        for pin in self.pin_in:
-            wpi.pinMode(pin, IN)
-        for pin in self.pin_out:
-            wpi.pinMode(pin, OUT)
-            wpi.digitalWrite(pin, 0)
-        
     def forward(self, pwm, dutycycle):
         wpi.digitalWrite(self.pin_out[0], 1)    # dir/pwm1 1
         wpi.digitalWrite(self.pin_out[2], 0)    # enb 0

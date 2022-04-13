@@ -5,23 +5,16 @@ from TB9051FTG import TB9051FTG
 from PCA9685 import PCA9685
 import odroid_wiringpi as wpi
 import time
-# from pololu import readEncoder
+import sys
+from encoder import Encoder
 
-def readEncoder():
-    # encA = wpi.digitalRead(MOTORS["pololu_1"]["enc_pins"][0])    # encA
-    # encB = wpi.digitalRead(MOTORS["pololu_1"]["enc_pins"][1])    # encB
-
-    # if encB > 0:
-    #     pos = pos + 1
-    # else:
-    #     pos = pos - 1
-    
-    print("HII")
-
+def updatePos(pos):
+    print("New position: {}".format(pos))
 
 def main():
     # init pins
     init_gpio()
+
     # set pwm frequency
     pwm = PWM(address=I2C_CHIP, busnum=I2C_BUS,debug=True)
     pwm.setPWMFreq(FREQUENCY)
@@ -38,24 +31,15 @@ def main():
     pololu_1 = TB9051FTG(channel=CHANNEL4, freq=300, pin_in=MOTORS["pololu_1"]["enc_pins"], pin_out=MOTORS["pololu_1"]["driver_pins"])
     pololu_1.reset(pwm)
 
+    enc1 = Encoder(4, 5)
 
-    # wpi.wiringPiSetupGpio()
-    # wpi.pinMode(5, wpi.GPIO.INPUT)
-    wpi.pullUpDnControl(5, wpi.GPIO.PUD_UP)
-
-    pos = 0
-
-    while True:
-        encA_pin = MOTORS["pololu_1"]["enc_pins"][0]
-        wpi.wiringPiISR(5, wpi.GPIO.INT_EDGE_BOTH, readEncoder)  # pass a callback function
-        encA = wpi.digitalRead(MOTORS["pololu_1"]["enc_pins"][0])    # encA
-        # encB = wpi.digitalRead(MOTORS["pololu_1"]["enc_pins"][1])    # encB
-        print(pos, encA)
-        # print(f"{encA}, {encB}")
-        # time.sleep(0.5)
-        # if encA:
-        #     pos = readEncoder(pos)
-        #     print(pos)
+    try:
+        while True:
+            print("Pos is {}".format(enc1.getPos()))
+            time.sleep(0.5)
+    except KeyboardInterrupt:
+        cleanup()
+        sys.exit(0)
 
     # while True:
     #     motor = input("Enter p0 for pololu0, p1 for pololu1, a for actuator, t for turnigy: ")
@@ -108,18 +92,30 @@ def main():
     #             turnigy_1.setPWM(pwm, dutycycle=64)
 
 def init_gpio():
+    # unexport pins
+    for pin in range(0, 256):
+        file = open("/sys/class/gpio/unexport","w")
+        file.write(str(pin))
+
     # setup wpi
     wpi.wiringPiSetup()
     
     # set pin mode
     for pin in GPIO_IN:
-        wpi.pinMode(pin, IN)
+        wpi.pinMode(pin, wpi.INPUT)
+        wpi.pullUpDnControl(pin, wpi.GPIO.PUD_UP)
 
-    for pin in GPIO_OUT:
-        wpi.pinMode(pin, OUT)
+    # for pin in GPIO_OUT:
+    #     wpi.pinMode(pin, OUT)
 
         # init out pins low
-        wpi.digitalWrite(pin, 0)
+        # wpi.digitalWrite(pin, 0)
+
+def cleanup():
+    # unexport pins
+    for pin in range(0, 256):
+        file = open("/sys/class/gpio/unexport","w")
+        file.write(str(pin))
 
 
 if __name__ == "__main__":
