@@ -23,9 +23,11 @@ def main():
     # INIT MOTORS
     actuonix_1 = PCA9685(channel=CHANNEL8, freq=300)
     actuonix_1.reset(pwm)
+    actuonix_1.setPWM(pwm, dutycycle=30)
     
     turnigy_1 = PCA9685(channel=CHANNEL12, freq=300)
     turnigy_1.reset(pwm)
+    turnigy_1.setPWM(pwm, dutycycle=28)
     
     pololu_0 = TB9051FTG(channel=CHANNEL0, freq=300, pin_in=MOTORS["pololu_0"]["enc_pins"], pin_out=MOTORS["pololu_0"]["driver_pins"], single=True)
     pololu_0.reset(pwm)
@@ -36,7 +38,8 @@ def main():
     # INIT PID CONTROLLERS
     pid_1 = PID(debug=True)
 
-    target = 0
+    # target = 0
+    target = 1
 
     try:
         while True:
@@ -49,24 +52,30 @@ def main():
 
             button1 = wpi.digitalRead(15)
             button2 = wpi.digitalRead(16)
-            # # target position
-            # target = 2000
-            if not button1:
-                target += 1
-            elif not button2:
-                target -= 1
-
+            
+            # target position
+            if target < 30:
+                if not button1:
+                    target += 1
+                    actuonix_1.setPWM(pwm, dutycycle=target+30)
+                    time.sleep(0.15)
+            if target > 0:
+                if not button2:
+                    target -= 1
+                    actuonix_1.setPWM(pwm, dutycycle=target+30)
+                    time.sleep(0.15)
+                
             print(target)
 
-            # TODO: Possibly put this in a pololu motor class? 
-            # TODO: create different classes for turnigy & actuators too? to limit range!
-            pid_1.loop(target)
+            # # TODO: Possibly put this in a pololu motor class? 
+            # # TODO: create different classes for turnigy & actuators too? to limit range!
+            # pid_1.loop(target)
 
-            # signal the motor
-            if pid_1.getDir() == -1:
-                pololu_1.forward(pwm, dutycycle=pid_1.getDc())
-            elif pid_1.getDir() == 1:
-                pololu_1.backward(pwm, dutycycle=pid_1.getDc())
+            # # signal the motor
+            # if pid_1.getDir() == -1:
+            #     pololu_1.forward(pwm, dutycycle=pid_1.getDc())
+            # elif pid_1.getDir() == 1:
+            #     pololu_1.backward(pwm, dutycycle=pid_1.getDc())
 
     except KeyboardInterrupt:
         pololu_1.reset(pwm)
