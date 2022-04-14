@@ -36,6 +36,8 @@ def main():
     # INIT PID CONTROLLERS
     pid_1 = PID(debug=True)
 
+    target = 0
+
     try:
         while True:
             # freq and dc motor testing
@@ -45,20 +47,26 @@ def main():
             # pololu_1.forward(pwm, dutycycle=int(dc))
             # pololu_0.forward(pwm, dutycycle=int(dc))
 
-            # target position
-            target = 2000
+            button1 = wpi.digitalRead(15)
+            button2 = wpi.digitalRead(16)
+            # # target position
+            # target = 2000
+            if not button1:
+                target += 1
+            elif not button2:
+                target -= 1
+
+            print(target)
 
             # TODO: Possibly put this in a pololu motor class? 
             # TODO: create different classes for turnigy & actuators too? to limit range!
             pid_1.loop(target)
-            fb_dir = pid_1.getDir()
-            fb_dc = pid_1.getDc()
-            # signal the motor
-            if fb_dir == -1:
-                pololu_1.forward(pwm, dutycycle=fb_dc)
-            elif fb_dir == 1:
-                pololu_1.backward(pwm, dutycycle=fb_dc)
 
+            # signal the motor
+            if pid_1.getDir() == -1:
+                pololu_1.forward(pwm, dutycycle=pid_1.getDc())
+            elif pid_1.getDir() == 1:
+                pololu_1.backward(pwm, dutycycle=pid_1.getDc())
 
     except KeyboardInterrupt:
         pololu_1.reset(pwm)
