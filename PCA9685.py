@@ -20,11 +20,13 @@ class PCA9685:
         pwm.setPWMCounters(self.channel, I2C_BUS, on_hex, off_hex)  # EN = 0
 
     def setPWM(self, pwm, dutycycle, delay=0):
-        print("Delay: {}, Duty Cycle: {}".format(delay, dutycycle))
         on_count, off_count = getCounterValues(delay, dutycycle)
         on_hex, off_hex = int(hex(on_count), base=16), int(hex(off_count), base=16)
 
-        print("ON: {}, {}, OFF: {}, {}".format(on_count, hex(on_count), off_count, hex(off_count)))
+        if self.debug:
+            print("Delay: {}, Duty Cycle: {}".format(delay, dutycycle))
+            print("ON: {}, {}, OFF: {}, {}".format(on_count, hex(on_count), off_count, hex(off_count)))
+        
         pwm.setPWMCounters(self.channel, I2C_BUS, on_hex, off_hex)
 
 

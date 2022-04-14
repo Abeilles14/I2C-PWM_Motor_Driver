@@ -13,20 +13,19 @@ class Encoder:
 
         self.callback = callback
 
-         # ENCODER INTERRUPT
-        wpi.wiringPiISR(5, wpi.GPIO.INT_EDGE_BOTH, self.readEncoder)
+        # ENCODER INTERRUPT
+        wpi.wiringPiISR(5, wpi.GPIO.INT_EDGE_RISING, self.readEncoder) #encA
 
     def readEncoder(self):
-        # encA = wpi.digitalRead(MOTORS["pololu_1"]["enc_pins"][0])    # encA
         encB = wpi.digitalRead(4)    # encB
 
         if encB > 0:
             self.pos += 1
         else:
             self.pos -= 1
-        print(self.pos)
-        
-        # self.callback(self.pos)
+
+        if self.callback != None:
+            self.callback(self.pos)
     
     def getPos(self):
         return self.pos

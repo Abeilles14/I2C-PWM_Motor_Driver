@@ -14,5 +14,7 @@ def getActuatorDCfromLength(len):
 
 # TODO
 def getMotorDCfromAngle(angle):
-
     return
+
+def pwmToDc(range):
+    return (100*(range + 1)/256)

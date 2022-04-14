@@ -19,16 +19,12 @@ class TB9051FTG:
         self.pin_out = pin_out  # dir en enb # en pwm1 pwm2
 
     def reset(self, pwm):
-        # reset PCA9685
-        if self.debug:
-            print("Reseting PCA9685")
-        on_count, off_count = getCounterValues(delay=0, dc=0)
-        on_hex, off_hex = int(hex(on_count), base=16), int(hex(off_count), base=16)
-        pwm.setPWMCounters(self.channel, I2C_BUS, on_hex, off_hex)  # EN = 0
-
         # reset TB9051FTG
         if self.debug:
             print("Reseting TB9051FTG")
+        on_count, off_count = getCounterValues(delay=0, dc=0)
+        on_hex, off_hex = int(hex(on_count), base=16), int(hex(off_count), base=16)
+        pwm.setPWMCounters(self.channel, I2C_BUS, on_hex, off_hex)  # EN = 0
 
     def forward(self, pwm, dutycycle):
         wpi.digitalWrite(self.pin_out[0], 1)    # dir/pwm1 1
@@ -55,11 +51,12 @@ class TB9051FTG:
         self.setPWM(pwm, 0)
 
     def setPWM(self, pwm, dutycycle, delay=0):
-        print("Delay: {}, Duty Cycle: {}".format(delay, dutycycle))
         on_count, off_count = getCounterValues(delay, dutycycle)
         on_hex, off_hex = int(hex(on_count), base=16), int(hex(off_count), base=16)
 
-        print("ON: {}, {}, OFF: {}, {}".format(on_count, hex(on_count), off_count, hex(off_count)))
+        if self.debug:
+            print("Delay: {}, Duty Cycle: {}".format(delay, dutycycle))
+            print("ON: {}, {}, OFF: {}, {}".format(on_count, hex(on_count), off_count, hex(off_count)))
         pwm.setPWMCounters(self.channel, I2C_BUS, on_hex, off_hex)
 
 
