@@ -7,6 +7,7 @@ import odroid_wiringpi as wpi
 import time
 import sys
 from PID_controller import PID
+from encoder import Encoder
 import math
 
 def updatePos(pos):
@@ -36,10 +37,11 @@ def main():
     pololu_1.reset(pwm)
 
     # INIT PID CONTROLLERS
-    pid_1 = PID(debug=True)
+    pid_1 = PID(MOTORS["pololu_1"]["enc_pins"], debug=True)
+    # enc = Encoder(MOTORS["pololu_1"]["enc_pins"])
 
-    # target = 0
-    target = 1
+    target = 0
+    # target = 1
 
     try:
         while True:
@@ -50,32 +52,39 @@ def main():
             # pololu_1.forward(pwm, dutycycle=int(dc))
             # pololu_0.forward(pwm, dutycycle=int(dc))
 
-            button1 = wpi.digitalRead(15)
-            button2 = wpi.digitalRead(16)
+            buttonA = wpi.digitalRead(4)   # A
+            buttonB = wpi.digitalRead(5)   # B
+            buttonX = wpi.digitalRead(6)   # X
+            buttonY = wpi.digitalRead(10)  # Y
             
+            # ACTUATOR CONTROL
             # target position
-            if target < 30:
-                if not button1:
-                    target += 1
-                    actuonix_1.setPWM(pwm, dutycycle=target+30)
-                    time.sleep(0.15)
-            if target > 0:
-                if not button2:
-                    target -= 1
-                    actuonix_1.setPWM(pwm, dutycycle=target+30)
-                    time.sleep(0.15)
+            # if target < 30:
+            #     if not buttonA:
+            #         target += 1
+            #         # actuonix_1.setPWM(pwm, dutycycle=target+30)
+            #         # time.sleep(0.15)
+            # if target > 0:
+            #     if not buttonB:
+            #         target -= 1
+                    # actuonix_1.setPWM(pwm, dutycycle=target+30)
+                    # time.sleep(0.15)
+
+            # POLOLU ENCODED
+            if not buttonA:
+                target += 1
+            if not buttonB:
+                target -= 1
                 
-            print(target)
+            # # TODO: create different classes pololu for turnigy & actuators too? to limit range!
+            pid_1.loop(target)
 
-            # # TODO: Possibly put this in a pololu motor class? 
-            # # TODO: create different classes for turnigy & actuators too? to limit range!
-            # pid_1.loop(target)
 
-            # # signal the motor
-            # if pid_1.getDir() == -1:
-            #     pololu_1.forward(pwm, dutycycle=pid_1.getDc())
-            # elif pid_1.getDir() == 1:
-            #     pololu_1.backward(pwm, dutycycle=pid_1.getDc())
+            # signal the motor
+            if pid_1.getDir() == -1:
+                pololu_1.forward(pwm, dutycycle=pid_1.getDc())
+            elif pid_1.getDir() == 1:
+                pololu_1.backward(pwm, dutycycle=pid_1.getDc())
 
     except KeyboardInterrupt:
         pololu_1.reset(pwm)

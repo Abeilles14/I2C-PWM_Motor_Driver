@@ -5,7 +5,7 @@ from encoder import Encoder
 from utils import pwmToDc
 
 class PID:
-    def __init__(self, target=0, debug=False):
+    def __init__(self, enc_pins, target=0, debug=False):
         self.target = target
         self.pos = 0
         self.dir = 0
@@ -16,7 +16,7 @@ class PID:
         self.eintegral = float(0)
         self.debug = debug
 
-        self.enc1 = Encoder(4, 5) # callback = updatePos
+        self.enc = Encoder(enc_pins) # callback = updatePos
 
     def loop(self, target):
         self.target = target
@@ -28,7 +28,7 @@ class PID:
         ki = float(0.0)
 
         # current pos
-        self.pos = self.enc1.getPos()
+        self.pos = self.enc.getPos()
 
         # time difference
         currT = time.time()

@@ -28,7 +28,6 @@ class TB9051FTG:
 
     def forward(self, pwm, dutycycle):
         wpi.digitalWrite(self.pin_out[0], 1)    # dir/pwm1 1
-        wpi.digitalWrite(self.pin_out[2], 0)    # enb 0
 
         if self.single:
             wpi.digitalWrite(self.pin_out[1], 0)    # en 1/pwm2 0
@@ -40,13 +39,11 @@ class TB9051FTG:
     def backward(self, pwm, dutycycle):
         wpi.digitalWrite(self.pin_out[0], 0)    # dir/pwm1 0
         wpi.digitalWrite(self.pin_out[1], 1)    # en/pwm2 1
-        wpi.digitalWrite(self.pin_out[2], 0)    # enb 0
 
         self.setPWM(pwm, dutycycle)
     
     def brake(self, pwm):
         wpi.digitalWrite(self.pin_out[1], 1)    # en/ 1
-        wpi.digitalWrite(self.pin_out[2], 0)    # enb 0
 
         self.setPWM(pwm, 0)
 
