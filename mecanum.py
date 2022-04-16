@@ -63,3 +63,21 @@ def setMotorTargets(sc_vrx, sc_vry, target_pololu):
         print("ERROR: Direction not supported, sorry my code kinda sucks")
         
     return target_pololu
+
+def setSpinMotorTargets(trigger_l, trigger_r, target_pololu):
+    if trigger_l > 0.2:
+        print("spin left")
+        # spin left (-+-+)
+        target_pololu[1] -= trigger_l
+        target_pololu[2] += trigger_l
+        target_pololu[3] -= trigger_l
+        target_pololu[4] += trigger_l
+    elif trigger_r > 0.2:
+        print("spin right")
+        # spin left (+-+-)
+        target_pololu[1] += trigger_r
+        target_pololu[2] -= trigger_r
+        target_pololu[3] += trigger_r
+        target_pololu[4] -= trigger_r
+        
+    return target_pololu

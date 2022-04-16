@@ -145,6 +145,8 @@ def main():
             js_sw = wpi.digitalRead(27)
             js_vrx = wpi.analogRead(25)
             js_vry = wpi.analogRead(29)
+            # trigger_l = wpi.analogRead(25)
+            # trigger_r = wpi.analogRead(29)
 
             sc_vrx, sc_vry= remap_range(js_vrx, js_vry)
 
@@ -164,10 +166,11 @@ def main():
             elif mode == ControlMode.DRIVE:
                 print("drive")
                 
-                # mecanum drive
+                # if trigger_l > 0.2 or trigger_r > 0.2:
+                #     target_pololu = mecanum.setSpinMotorTargets(trigger_l, trigger_r, target_pololu)
+                # else:
+                #     # mecanum drive
                 target_pololu = mecanum.setMotorTargets(sc_vrx, sc_vry, target_pololu)
-
-                # TODO: trigger control
 
                 pid_1.loop(round(target_pololu[1]))
                 # pid_2.loop(round(target_pololu[2]))
