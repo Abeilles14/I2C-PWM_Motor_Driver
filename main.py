@@ -7,6 +7,7 @@ from utils import remap_range
 import odroid_wiringpi as wpi
 import time
 import sys
+import mecanum
 from PID_controller import PID
 from encoder import Encoder
 import math
@@ -137,7 +138,7 @@ def main():
             elif button_pressed[3]:
                 mode = ControlMode.IDLE
             else:
-                print("ERROR: mode not recognized :(")
+                print("ERROR: mode not recognized, ya screwed up")
 
             # TODO: Remove once xbox remote connected
             # joystick detection
@@ -162,27 +163,43 @@ def main():
 
             elif mode == ControlMode.DRIVE:
                 print("drive")
-                # TODO: add more controls for all wheels and mecanum
-                pass
-                # if sc_vry > 0:
-                #     target += sc_vry
-                # elif sc_vry < 0:
-                #     target -= sc_vry
-                    
-                # # # TODO: create different classes pololu for turnigy & actuators too? to limit range!
-                # pid_1.loop(round(target))
+                
+                # mecanum drive
+                target_pololu = mecanum.setMotorTargets(sc_vrx, sc_vry, target_pololu)
 
-                # # signal the motor
-                # if pid_1.getDir() == -1:
-                #     pololu_1.forward(pwm, dutycycle=pid_1.getDc())
-                # elif pid_1.getDir() == 1:
-                #     pololu_1.backward(pwm, dutycycle=pid_1.getDc())
+                # TODO: trigger control
+
+                pid_1.loop(round(target_pololu[1]))
+                # pid_2.loop(round(target_pololu[2]))
+                # pid_3.loop(round(target_pololu[3]))
+                # pid_4.loop(round(target_pololu[4]))
+
+                # signal the motors
+                if pid_1.getDir() == -1:
+                    pololu_1.forward(pwm, dutycycle=pid_1.getDc())
+                elif pid_1.getDir() == 1:
+                    pololu_1.backward(pwm, dutycycle=pid_1.getDc())
+                
+                # if pid_2.getDir() == -1:
+                #     pololu_2.forward(pwm, dutycycle=pid_2.getDc())
+                # elif pid_2.getDir() == 1:
+                #     pololu_2.backward(pwm, dutycycle=pid_2.getDc())
+
+                # if pid_3.getDir() == -1:
+                #     pololu_3.forward(pwm, dutycycle=pid_3.getDc())
+                # elif pid_3.getDir() == 1:
+                #     pololu_3.backward(pwm, dutycycle=pid_3.getDc())
+
+                # if pid_4.getDir() == -1:
+                #     pololu_4.forward(pwm, dutycycle=pid_4.getDc())
+                # elif pid_4.getDir() == 1:
+                #     pololu_4.backward(pwm, dutycycle=pid_4.getDc())
             
             elif mode == ControlMode.WINCH:
                 print("winch")
-                if sc_vry > 0.5:
+                if sc_vry > 0.3:
                     pololu_0.forward(pwm, dutycycle=60)
-                elif sc_vry < 0.5:
+                elif sc_vry < 0.3:
                     pololu_0.backward(pwm, dutycycle=60)
 
             elif mode == ControlMode.CLAW:
@@ -192,16 +209,15 @@ def main():
                 print(f"DC: {target_actuator[0]}")
 
                 # not allowed: 30 & y+, 0 and y-
-                if not ((math.ceil(target_actuator[0]) >= 30 and sc_vry > 0.1) or (math.floor(target_actuator[0]) == 0 and sc_vry < 0.1)):
+                if not ((math.ceil(target_actuator[0]) >= 30 and sc_vry > -0.1) or (math.floor(target_actuator[0]) == 0 and sc_vry < 0.1)):
                     target_actuator[0] += sc_vry
                     actuonix_1.setPWM(pwm, dutycycle=target_actuator[0]+30)
                     # actuonix_2.setPWM(pwm, dutycycle=target_actuator[0]+30)
                     time.sleep(0.08)
-                
 
                 # HORIZONTAL ACTUATORS
                 # not allowed: 30 & y+, 0 and y-
-                if not ((math.ceil(target_actuator[1]) >= 30 and sc_vrx > 0.1) or (math.floor(target_actuator[1]) == 0 and sc_vrx < 0.1)):
+                if not ((math.ceil(target_actuator[1]) >= 30 and sc_vrx > -0.1) or (math.floor(target_actuator[1]) == 0 and sc_vrx < 0.1)):
                     target_actuator[1] += sc_vrx
                     # actuonix_3.setPWM(pwm, dutycycle=target_actuator[1]+30)
                     # actuonix_4.setPWM(pwm, dutycycle=target_actuator[1]+30)
@@ -220,43 +236,11 @@ def main():
                     elif not plate_closed:
                         plate_closed = True
                         turnigy_1.setPWM(pwm, dutycycle=56)
-                        # turnigy_2.setPWM(pwm, dutycycle=51)
+                        # turnigy_2.setPWM(pwm, dutycycle=56)
 
                     joystick_pressed = False
-
-
             else:
                 print("ERROR: mode not recognized :(")
-
-
-            # ACTUATOR CONTROL
-            # target position
-            # if target < 30:
-            #     if not buttonA:
-            #         target += 1
-            #         # actuonix_1.setPWM(pwm, dutycycle=target+30)
-            #         # time.sleep(0.15)
-            # if target > 0:
-            #     if not buttonB:
-            #         target -= 1
-                    # actuonix_1.setPWM(pwm, dutycycle=target+30)
-                    # time.sleep(0.15)
-
-            # # SERVO CONTROL
-            # while not buttonY:
-            #     buttonY_pressed = True
-            #     buttonY = wpi.digitalRead(10)  # Y
-
-            # if buttonY_pressed:
-            #     if plate_closed:
-            #         plate_closed = False
-            #         turnigy_1.setPWM(pwm, dutycycle=28)
-            #     elif not plate_closed:
-            #         plate_closed = True
-            #         turnigy_1.setPWM(pwm, dutycycle=51)
-
-            #     buttonY_pressed = False
-
 
     except KeyboardInterrupt:
         actuonix_1.reset(pwm)
