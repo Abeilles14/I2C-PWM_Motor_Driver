@@ -1,3 +1,5 @@
+from enum import Enum
+
 # Register Addresses
 MODE1           = 0x00
 MODE2           = 0x01
@@ -99,6 +101,13 @@ GPIO_IN = [15, 16, 1, 4, 5, 6, 10, 11]
 # ODROID DIGITAL OUTPUT PINS
 GPIO_OUT = [7, 0, 2, 3, 12, 13, 14, 30, 21, 22]
 
+# CONTROL MODE
+class ControlMode(Enum):
+    IDLE = 0
+    DRIVE = 1
+    WINCH = 2
+    CLAW = 3
+
 # DUTY CYCLE THRESHOLD
 MAX_DC = 99
 MIN_DC = 9
@@ -112,3 +121,8 @@ I2C_CHIP = 0x40
 FREQUENCY=300
 COUNTER_SIZE = 4096.0
 CLK = 25000000.0
+
+# JOYSTICK TEMP
+MAX_RANGE = 4095
+MIN_RANGE = 0
+CENTER_POS = round(4095/2)
