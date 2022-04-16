@@ -219,7 +219,7 @@ def main():
                         # turnigy_2.setPWM(pwm, dutycycle=28)
                     elif not plate_closed:
                         plate_closed = True
-                        turnigy_1.setPWM(pwm, dutycycle=51)
+                        turnigy_1.setPWM(pwm, dutycycle=56)
                         # turnigy_2.setPWM(pwm, dutycycle=51)
 
                     joystick_pressed = False
