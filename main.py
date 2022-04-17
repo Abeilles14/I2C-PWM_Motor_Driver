@@ -64,27 +64,33 @@ def main():
     pololu_1 = TB9051FTG(channel=CHANNEL4, freq=300, pin_in=MOTORS["pololu_1"]["enc_pins"], pin_out=MOTORS["pololu_1"]["driver_pins"])
     pololu_1.reset(pwm)
 
-    # pololu_2 = TB9051FTG(channel=CHANNEL5, freq=300, pin_in=MOTORS["pololu_2"]["enc_pins"], pin_out=MOTORS["pololu_2"]["driver_pins"])
-    # pololu_2.reset(pwm)
+    pololu_2 = TB9051FTG(channel=CHANNEL5, freq=300, pin_in=MOTORS["pololu_2"]["enc_pins"], pin_out=MOTORS["pololu_2"]["driver_pins"])
+    pololu_2.reset(pwm)
 
-    # pololu_3 = TB9051FTG(channel=CHANNEL6, freq=300, pin_in=MOTORS["pololu_3"]["enc_pins"], pin_out=MOTORS["pololu_3"]["driver_pins"])
-    # pololu_3.reset(pwm)
+    pololu_3 = TB9051FTG(channel=CHANNEL6, freq=300, pin_in=MOTORS["pololu_3"]["enc_pins"], pin_out=MOTORS["pololu_3"]["driver_pins"])
+    pololu_3.reset(pwm)
 
-    # pololu_4 = TB9051FTG(channel=CHANNEL7, freq=300, pin_in=MOTORS["pololu_4"]["enc_pins"], pin_out=MOTORS["pololu_4"]["driver_pins"])
-    # pololu_4.reset(pwm)
+    pololu_4 = TB9051FTG(channel=CHANNEL7, freq=300, pin_in=MOTORS["pololu_4"]["enc_pins"], pin_out=MOTORS["pololu_4"]["driver_pins"])
+    pololu_4.reset(pwm)
 
     # INIT PID CONTROLLERS
     pid_1 = PID(MOTORS["pololu_1"]["enc_pins"])
-    # pid_2 = PID(MOTORS["pololu_2"]["enc_pins"], debug=True)
-    # pid_3 = PID(MOTORS["pololu_3"]["enc_pins"], debug=True)
-    # pid_4 = PID(MOTORS["pololu_4"]["enc_pins"], debug=True)
+    pid_2 = PID(MOTORS["pololu_2"]["enc_pins"])
+    pid_3 = PID(MOTORS["pololu_3"]["enc_pins"])
+    pid_4 = PID(MOTORS["pololu_4"]["enc_pins"])
 
     # TODO: Remove, TEMP joystick button
     button_pressed = [0, 0, 0, 1]    # A B X Y
     joystick_pressed = False
 
-    wpi.pinMode(27, wpi.INPUT)
-    wpi.pullUpDnControl(27, wpi.GPIO.PUD_UP)
+    # Joystick SW
+    # wpi.pinMode(27, wpi.INPUT)
+    # wpi.pullUpDnControl(27, wpi.GPIO.PUD_UP)
+
+    PIN_A = 27
+    PIN_B = 23
+    PIN_X = 26
+    PIN_Y = 10
     ################
 
     target_pololu = [0, 0, 0, 0, 0] # p0, p1, p2, p3, p4 = [w, fl, fr, rl, rr]
@@ -105,27 +111,27 @@ def main():
 
             # TODO: Remove, Temp code for joystick
             # A B X Y
-            buttonA = wpi.digitalRead(4)   # A
-            buttonB = wpi.digitalRead(5)   # B
-            buttonX = wpi.digitalRead(10)   # X
-            buttonY = wpi.digitalRead(6)  # Y
+            buttonA = wpi.digitalRead(PIN_A)   # A
+            buttonB = wpi.digitalRead(PIN_B)   # B
+            buttonX = wpi.digitalRead(PIN_X)   # X
+            buttonY = wpi.digitalRead(PIN_Y)  # Y
 
             # button debouncing detection
             while not buttonA:
                 button_pressed = [1, 0, 0, 0]
-                buttonA = wpi.digitalRead(4)
+                buttonA = wpi.digitalRead(PIN_A)
                 print("DRIVE MODE")
             while not buttonB:
                 button_pressed = [0, 1, 0, 0]
-                buttonB = wpi.digitalRead(5)
+                buttonB = wpi.digitalRead(PIN_B)
                 print("WINCH MODE")
             while not buttonX:
                 button_pressed = [0, 0, 1, 0]
-                buttonX = wpi.digitalRead(10)
+                buttonX = wpi.digitalRead(PIN_X)
                 print("CLAW MODE")
             while not buttonY:
                 button_pressed = [0, 0, 0, 1]
-                buttonY = wpi.digitalRead(6)
+                buttonY = wpi.digitalRead(PIN_Y)
                 print("IDLE MODE")
 
             # mode assignment
@@ -142,7 +148,7 @@ def main():
 
             # TODO: Remove once xbox remote connected
             # joystick detection
-            js_sw = wpi.digitalRead(27)
+            # js_sw = wpi.digitalRead(27)
             js_vrx = wpi.analogRead(25)
             js_vry = wpi.analogRead(29)
             # trigger_l = wpi.analogRead(25)
@@ -150,12 +156,13 @@ def main():
 
             sc_vrx, sc_vry= remap_range(js_vrx, js_vry)
 
-            if sc_vry < 0.05 and sc_vry > -0.05:
+            if sc_vry < 0.2 and sc_vry > -0.2:
                 sc_vry = 0.0
-            if sc_vrx < 0.05 and sc_vrx > -0.05:
+            if sc_vrx < 0.2 and sc_vrx > -0.2:
                 sc_vrx = 0.0
 
-            print(f"SW: {js_sw}, sX: {sc_vrx}, sY: {sc_vry}")
+            # print(f"SW: {js_sw}, sX: {sc_vrx}, sY: {sc_vry}")
+            print(f"sX: {sc_vrx}, sY: {sc_vry}")
             ################################
 
             # move according to mode and joystick ctrls
@@ -170,12 +177,16 @@ def main():
                 #     target_pololu = mecanum.setSpinMotorTargets(trigger_l, trigger_r, target_pololu)
                 # else:
                 #     # mecanum drive
-                target_pololu = mecanum.setMotorTargets(sc_vrx, sc_vry, target_pololu)
+                
+                target_pololu = mecanum.setMotorTargets(sc_vrx, sc_vry, 0.0, target_pololu)
+
+                print(f"target: {target_pololu}")
+                print(f"pos: {[0.0, pid_1.getDc(), pid_2.getDc(), pid_3.getDc(), pid_4.getDc()]}")
 
                 pid_1.loop(round(target_pololu[1]))
-                # pid_2.loop(round(target_pololu[2]))
-                # pid_3.loop(round(target_pololu[3]))
-                # pid_4.loop(round(target_pololu[4]))
+                pid_2.loop(round(target_pololu[2]))
+                pid_3.loop(round(target_pololu[3]))
+                pid_4.loop(round(target_pololu[4]))
 
                 # signal the motors
                 if pid_1.getDir() == -1:
@@ -183,27 +194,29 @@ def main():
                 elif pid_1.getDir() == 1:
                     pololu_1.backward(pwm, dutycycle=pid_1.getDc())
                 
-                # if pid_2.getDir() == -1:
-                #     pololu_2.forward(pwm, dutycycle=pid_2.getDc())
-                # elif pid_2.getDir() == 1:
-                #     pololu_2.backward(pwm, dutycycle=pid_2.getDc())
+                if pid_2.getDir() == -1:
+                    pololu_2.forward(pwm, dutycycle=pid_2.getDc())
+                elif pid_2.getDir() == 1:
+                    pololu_2.backward(pwm, dutycycle=pid_2.getDc())
 
-                # if pid_3.getDir() == -1:
-                #     pololu_3.forward(pwm, dutycycle=pid_3.getDc())
-                # elif pid_3.getDir() == 1:
-                #     pololu_3.backward(pwm, dutycycle=pid_3.getDc())
+                if pid_3.getDir() == -1:
+                    pololu_3.forward(pwm, dutycycle=pid_3.getDc())
+                elif pid_3.getDir() == 1:
+                    pololu_3.backward(pwm, dutycycle=pid_3.getDc())
 
-                # if pid_4.getDir() == -1:
-                #     pololu_4.forward(pwm, dutycycle=pid_4.getDc())
-                # elif pid_4.getDir() == 1:
-                #     pololu_4.backward(pwm, dutycycle=pid_4.getDc())
+                if pid_4.getDir() == -1:
+                    pololu_4.forward(pwm, dutycycle=pid_4.getDc())
+                elif pid_4.getDir() == 1:
+                    pololu_4.backward(pwm, dutycycle=pid_4.getDc())
             
             elif mode == ControlMode.WINCH:
                 print("winch")
                 if sc_vry > 0.3:
-                    pololu_0.forward(pwm, dutycycle=60)
-                elif sc_vry < 0.3:
-                    pololu_0.backward(pwm, dutycycle=60)
+                    pololu_0.forward(pwm, dutycycle=WINCH_DC_SPEED)
+                elif sc_vry < -0.3:
+                    pololu_0.backward(pwm, dutycycle=WINCH_DC_SPEED)
+                else:
+                    pololu_0.backward(pwm, dutycycle=0)
 
             elif mode == ControlMode.CLAW:
                 print("claw")
@@ -254,9 +267,9 @@ def main():
         # turnigy_2.reset(pwm)
         pololu_0.reset(pwm)
         pololu_1.reset(pwm)
-        # pololu_2.reset(pwm)
-        # pololu_3.reset(pwm)
-        # pololu_4.reset(pwm)
+        pololu_2.reset(pwm)
+        pololu_3.reset(pwm)
+        pololu_4.reset(pwm)
         cleanup()
         sys.exit(0)
 

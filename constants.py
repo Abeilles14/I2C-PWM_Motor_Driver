@@ -111,6 +111,7 @@ class ControlMode(Enum):
 # DUTY CYCLE THRESHOLD
 MAX_DC = 99
 MIN_DC = 9
+WINCH_DC_SPEED = 50
 
 # I2C parameter defaults
 I2C_BUS = 0
