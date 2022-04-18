@@ -112,6 +112,7 @@ class ControlMode(Enum):
 MAX_DC = 99
 MIN_DC = 9
 WINCH_DC_SPEED = 50
+ACTUATOR_DC_MIN = 30
 
 # I2C parameter defaults
 I2C_BUS = 0

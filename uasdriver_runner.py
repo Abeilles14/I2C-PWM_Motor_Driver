@@ -1,21 +1,13 @@
-from pwm import PWM
 from constants import *
 from motor_specs import MOTORS
-from TB9051FTG import TB9051FTG
-from PCA9685 import PCA9685
 from utils import remap_range
 import odroid_wiringpi as wpi
-import time
-import sys
-import mecanum
-from PID_controller import PID
-from encoder import Encoder
-import math
-
-def updatePos(pos):
-    print("New position: {}".format(pos))
+from uasdriver import UASDriver
 
 def main():
+    uasdriver = UASDriver()
+
+def main2():
     ##################
     # INIT GPIO PINS #
     ##################
@@ -24,13 +16,14 @@ def main():
     ############
     # INIT PWM #
     ############
+    print("Init PWM...")
     pwm = PWM(address=I2C_CHIP, busnum=I2C_BUS, debug=False)
     pwm.setPWMFreq(FREQUENCY)
 
     ###############
     # INIT MOTORS #
     ###############
-
+    print("Init Motors...")
     # ACTUATORS
     actuonix_1 = PCA9685(channel=CHANNEL8, freq=300)
     actuonix_1.reset(pwm)
@@ -74,6 +67,7 @@ def main():
     pololu_4.reset(pwm)
 
     # INIT PID CONTROLLERS
+    print("Init PID controllers...")
     pid_1 = PID(MOTORS["pololu_1"]["enc_pins"])
     pid_2 = PID(MOTORS["pololu_2"]["enc_pins"])
     pid_3 = PID(MOTORS["pololu_3"]["enc_pins"])
@@ -99,6 +93,8 @@ def main():
 
     plate_closed = False
     mode = ControlMode.IDLE
+
+    print("System init complete! Starting main routine...")
 
     try:
         while True:
@@ -274,6 +270,7 @@ def main():
         sys.exit(0)
 
 def init_gpio():
+    print("Init GPIO...")
     # unexport pins
     for pin in range(0, 256):
         file = open("/sys/class/gpio/unexport","w")
@@ -291,12 +288,15 @@ def init_gpio():
         wpi.pinMode(pin, wpi.OUTPUT)
         # init out pins low
         wpi.digitalWrite(pin, 0)
+    print("Init GPIO complete!")
 
 def cleanup():
+    print("Cleaning up...")
     # unexport pins
     for pin in range(0, 256):
         file = open("/sys/class/gpio/unexport","w")
         file.write(str(pin))
+print("Cleanup complete!")
 
 
 if __name__ == "__main__":
