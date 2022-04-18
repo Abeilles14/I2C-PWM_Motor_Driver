@@ -111,7 +111,8 @@ class UASDriver:
         self.pid_4 = PID(MOTORS["pololu_4"]["enc_pins"])
 
         log.info("Motor Drive System init complete! Starting main routine...")
-        self.controlLoop()
+        
+        # self.controlLoop()
     
     def setRemoteValues(self, buttonA, buttonB, buttonX, buttonY, ljs_x, ljs_y, ljs_sw, rjs_x, rjs_y, rjs_sw):
         # joystick movement tolerance
