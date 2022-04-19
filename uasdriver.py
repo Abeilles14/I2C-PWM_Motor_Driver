@@ -106,7 +106,7 @@ class UASDriver:
         self.pololu_4 = TB9051FTG(channel=CHANNEL7, freq=300, pin_in=MOTORS["pololu_4"]["enc_pins"], pin_out=MOTORS["pololu_4"]["driver_pins"])
         self.pololu_4.reset(self.pwm)
 
-        # # INIT PID CONTROLLERS
+        # INIT PID CONTROLLERS
         uaslog.debug("Init PID controllers...")
         self.pid_1 = PID(MOTORS["pololu_1"]["enc_pins"])
         self.pid_2 = PID(MOTORS["pololu_2"]["enc_pins"])
