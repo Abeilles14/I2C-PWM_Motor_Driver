@@ -1,16 +1,17 @@
 import time
 import sys
+import mecanum
 import math
 import logging
 import odroid_wiringpi as wpi
 from pwm import PWM
-from uas_control_system.constants import *
-from uas_control_system.motor_specs import MOTORS
-from uas_control_system.TB9051FTG import TB9051FTG
-from uas_control_system.PCA9685 import PCA9685
-from uas_control_system.utils import remap_range
-from uas_control_system.PID_controller import PID
-from uas_control_system.encoder import Encoder
+from constants import *
+from motor_specs import MOTORS
+from TB9051FTG import TB9051FTG
+from PCA9685 import PCA9685
+from utils import remap_range
+from PID_controller import PID
+from encoder import Encoder
 
 logging.getLogger("Adafruit_I2C.Device.Bus.{0}.Address.{1:#0X}".format(0, 0X40)).setLevel(logging.WARNING)
 logging.basicConfig(level=logging.DEBUG)
@@ -30,10 +31,10 @@ class EncoderPosition:
         uaslog.info("Starting Encoder Position Sensing Test...")
         uaslog.info("Remove Encoder Cap and Turn the Magnet in Both Direction to Observe Changes in Position.")
 
-        enc1 = Encoder(MOTOR["pololu1"]["enc_pins"])
-        enc2 = Encoder(MOTOR["pololu2"]["enc_pins"])
-        enc3 = Encoder(MOTOR["pololu3"]["enc_pins"])
-        enc4 = Encoder(MOTOR["pololu4"]["enc_pins"])
+        enc1 = Encoder(MOTORS["pololu_1"]["enc_pins"])
+        enc2 = Encoder(MOTORS["pololu_2"]["enc_pins"])
+        enc3 = Encoder(MOTORS["pololu_3"]["enc_pins"])
+        enc4 = Encoder(MOTORS["pololu_4"]["enc_pins"])
 
         try:
             while True:
