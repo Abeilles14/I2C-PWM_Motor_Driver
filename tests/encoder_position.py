@@ -3,14 +3,14 @@ import sys
 import math
 import logging
 import odroid_wiringpi as wpi
-from pwm import PWM
-from constants import *
-from motor_specs import MOTORS
-from TB9051FTG import TB9051FTG
-from PCA9685 import PCA9685
-from utils import remap_range
-from PID_controller import PID
-from encoder import Encoder
+from uas_control_system.pwm import PWM
+from uas_control_system.constants import *
+from uas_control_system.motor_specs import MOTORS
+from uas_control_system.TB9051FTG import TB9051FTG
+from uas_control_system.PCA9685 import PCA9685
+from uas_control_system.utils import remap_range
+from uas_control_system.PID_controller import PID
+from uas_control_system.encoder import Encoder
 
 logging.getLogger("Adafruit_I2C.Device.Bus.{0}.Address.{1:#0X}".format(0, 0X40)).setLevel(logging.WARNING)
 logging.basicConfig(level=logging.DEBUG)
