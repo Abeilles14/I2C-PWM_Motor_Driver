@@ -65,12 +65,12 @@ class PIDControl:
         
     def loop(self):
         uaslog.info("Starting PID Control Test...")
-        uaslog.info("Each Motor Will Move to Target 1500.")
+        uaslog.info("Each Motor Will Move to Target 2500.")
 
-        # self.target_pololu[1] = 1500
-        # self.target_pololu[2] = 1500
-        self.target_pololu[3] = 1500
-        # self.target_pololu[4] = 1500
+        # self.target_pololu[1] = 2500
+        # self.target_pololu[2] = 2500
+        self.target_pololu[3] = 2500
+        # self.target_pololu[4] = 2500
 
         try:
             while True:
@@ -103,7 +103,7 @@ class PIDControl:
                 
                 print(f"curr pos: [{self.pid_3.getPos()}, ]")
                 # print(f"curr pos: [{self.pid_1.getPos()}, {self.pid_2.getPos()}, {self.pid_3.getPos()}, {self.pid_4.getPos()}, ]")
-                
+
         except KeyboardInterrupt:
             uaslog.info("PID Control Test Complete!")
             self.cleanup()
