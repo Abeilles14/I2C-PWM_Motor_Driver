@@ -59,14 +59,14 @@ class JoystickControl:
         ###############
         uaslog.debug("Init Motors...")
         # DC BRUSHED
-        self.pololu_1 = TB9051FTG(channel=CHANNEL4, freq=300, pin_in=MOTORS["pololu_1"]["enc_pins"], pin_out=MOTORS["pololu_1"]["driver_pins"])
-        self.pololu_1.reset(self.pwm)
+        # self.pololu_1 = TB9051FTG(channel=CHANNEL4, freq=300, pin_in=MOTORS["pololu_1"]["enc_pins"], pin_out=MOTORS["pololu_1"]["driver_pins"])
+        # self.pololu_1.reset(self.pwm)
 
         # self.pololu_2 = TB9051FTG(channel=CHANNEL5, freq=300, pin_in=MOTORS["pololu_2"]["enc_pins"], pin_out=MOTORS["pololu_2"]["driver_pins"])
         # self.pololu_2.reset(self.pwm)
 
-        # self.pololu_3 = TB9051FTG(channel=CHANNEL6, freq=300, pin_in=MOTORS["pololu_3"]["enc_pins"], pin_out=MOTORS["pololu_3"]["driver_pins"])
-        # self.pololu_3.reset(self.pwm)
+        self.pololu_3 = TB9051FTG(channel=CHANNEL6, freq=300, pin_in=MOTORS["pololu_3"]["enc_pins"], pin_out=MOTORS["pololu_3"]["driver_pins"])
+        self.pololu_3.reset(self.pwm)
 
         # self.pololu_4 = TB9051FTG(channel=CHANNEL7, freq=300, pin_in=MOTORS["pololu_4"]["enc_pins"], pin_out=MOTORS["pololu_4"]["driver_pins"])
         # self.pololu_4.reset(self.pwm)
@@ -75,9 +75,9 @@ class JoystickControl:
         # INIT PID CONTROLLERS #
         ########################
         uaslog.debug("Init PID controllers...")
-        self.pid_1 = PID(MOTORS["pololu_1"]["enc_pins"], debug=True)
+        # self.pid_1 = PID(MOTORS["pololu_1"]["enc_pins"], debug=True)
         # self.pid_2 = PID(MOTORS["pololu_2"]["enc_pins"])
-        # self.pid_3 = PID(MOTORS["pololu_3"]["enc_pins"])
+        self.pid_3 = PID(MOTORS["pololu_3"]["enc_pins"])
         # self.pid_4 = PID(MOTORS["pololu_4"]["enc_pins"])
 
         uaslog.info("Motor Drive System init complete! Starting main routine...")
@@ -92,60 +92,55 @@ class JoystickControl:
                 # button1 = wpi.digitalRead(PIN_A)
                 # button2 = wpi.digitalRead(PIN_B)
                 # # target position
-                self.target_pololu[1] = 1000
+                # self.target_pololu[3] = 2000
                 # if not button1:
-                #     self.target_pololu[1] += 1
+                #     self.target_pololu[3] += 1
                 # elif not button2:
-                #     self.target_pololu[1] -= 1
+                #     self.target_pololu[3] -= 1
 
-                # enc_a = wpi.digitalRead(MOTORS["pololu_1"]["enc_pins"][0])
-                # enc_b = wpi.digitalRead(MOTORS["pololu_1"]["enc_pins"][1])
-
-                print(f"target: {self.target_pololu[1]}")
-                # print("ENC A: {}, ENC B: {}".format(enc_a, enc_b))
                 
                 # READ JOYSTICK
-                # raw_ljs_x = wpi.analogRead(PIN_LJSX)
-                # raw_ljs_y = wpi.analogRead(PIN_LJSY)
+                raw_ljs_x = wpi.analogRead(PIN_LJSX)
+                raw_ljs_y = wpi.analogRead(PIN_LJSY)
 
-                # ljs_x, ljs_y = remap_range(raw_ljs_x, raw_ljs_y)
+                ljs_x, ljs_y = remap_range(raw_ljs_x, raw_ljs_y)
 
-                # if ljs_y < 0.2 and ljs_y > -0.2:
-                #     ljs_y = 0.0
-                # if ljs_x < 0.2 and ljs_x > -0.2:
-                #     ljs_x = 0.0
+                if ljs_y < 0.2 and ljs_y > -0.2:
+                    ljs_y = 0.0
+                if ljs_x < 0.2 and ljs_x > -0.2:
+                    ljs_x = 0.0
                 
-                # print(f"sX: {ljs_x:.4f}, sY: {ljs_y:.4f}")
+                print(f"sX: {ljs_x:.4f}, sY: {ljs_y:.4f}")
 
                 # # SET MOTOR TARGETS
                 # self.target_pololu[1] += ljs_y
                 # self.target_pololu[2] += ljs_y
-                # self.target_pololu[3] += ljs_y
+                self.target_pololu[3] += ljs_y
                 # self.target_pololu[4] += ljs_y
                 
-                # print(f"target pos: [{self.target_pololu[1]:.4f}")
+                print(f"target pos: [{self.target_pololu[3]:.4f}")
                 # print(f"target pos: [{self.target_pololu[1]:.4f}, {self.target_pololu[2]:.4f}, {self.target_pololu[3]:.4f}, {self.target_pololu[4]:.4f}]")
 
-                self.pid_1.loop(round(self.target_pololu[1]))
+                # self.pid_1.loop(round(self.target_pololu[1]))
                 # self.pid_2.loop(round(self.target_pololu[2]))
-                # self.pid_3.loop(round(self.target_pololu[3]))
+                self.pid_3.loop(round(self.target_pololu[3]))
                 # self.pid_4.loop(round(self.target_pololu[4]))
 
                 # signal the motors
-                if self.pid_1.getDir() == -1:
-                    self.pololu_1.forward(self.pwm, dutycycle=self.pid_1.getDc())
-                elif self.pid_1.getDir() == 1:
-                    self.pololu_1.backward(self.pwm, dutycycle=self.pid_1.getDc())
+                # if self.pid_1.getDir() == -1:
+                #     self.pololu_1.forward(self.pwm, dutycycle=self.pid_1.getDc())
+                # elif self.pid_1.getDir() == 1:
+                #     self.pololu_1.backward(self.pwm, dutycycle=self.pid_1.getDc())
                 
                 # if self.pid_2.getDir() == -1:
                 #     self.pololu_2.forward(self.pwm, dutycycle=self.pid_2.getDc())
                 # elif self.pid_2.getDir() == 1:
                 #     self.pololu_2.backward(self.pwm, dutycycle=self.pid_2.getDc())
 
-                # if self.pid_3.getDir() == -1:
-                #     self.pololu_3.forward(self.pwm, dutycycle=self.pid_3.getDc())
-                # elif self.pid_3.getDir() == 1:
-                #     self.pololu_3.backward(self.pwm, dutycycle=self.pid_3.getDc())
+                if self.pid_3.getDir() == -1:
+                    self.pololu_3.forward(self.pwm, dutycycle=self.pid_3.getDc())
+                elif self.pid_3.getDir() == 1:
+                    self.pololu_3.backward(self.pwm, dutycycle=self.pid_3.getDc())
 
                 # if self.pid_4.getDir() == -1:
                 #     self.pololu_4.forward(self.pwm, dutycycle=self.pid_4.getDc())
@@ -184,10 +179,10 @@ class JoystickControl:
     def cleanup(self):
         uaslog.info("Cleaning up driver system...")
         # reset motors
-        self.pololu_1.reset(self.pwm)
-        self.pololu_2.reset(self.pwm)
+        # self.pololu_1.reset(self.pwm)
+        # self.pololu_2.reset(self.pwm)
         self.pololu_3.reset(self.pwm)
-        self.pololu_4.reset(self.pwm)
+        # self.pololu_4.reset(self.pwm)
 
 def main():
     test = JoystickControl()
