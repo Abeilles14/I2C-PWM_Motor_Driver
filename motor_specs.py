@@ -33,41 +33,41 @@ MOTORS = {
     "actuonix_1": {
         "position": "down left",
         "frequency": 300,   # hz
-        "dc low": 30,     # 30-60%
-        "dc high": 60,
+        "dc_low": 30,     # 30-60%
+        "dc_high": 60,
         "stroke": 100,   # mm
     },
     "actuonix_2": {
         "position": "down right",
         "frequency": 300,   # hz
-        "dc low": 30,     # 30-60%
-        "dc high": 60,
+        "dc_low": 30,     # 30-60%
+        "dc_high": 60,
         "stroke": 100,   # mm
     },
     "actuonix_3": {
         "position": "side left",
         "frequency": 300,   # hz
-        "dc low": 30,     # 30-60%
-        "dc high": 60,
+        "dc_low": 30,     # 30-60%
+        "dc_high": 60,
         "stroke": 100,   # mm
     },
     "actuonix_4": {
         "position": "side right",
         "frequency": 300,   # hz
-        "dc low": 30,     # 30-60%
-        "dc high": 60,
+        "dc_low": 30,     # 30-60%
+        "dc_high": 60,
         "stroke": 100,   # mm
     },
     "turnigy_1": {
         "position": "plate left",
         "frequency": 300,   # hz
-        "dc low": 28,     # 28-64%
-        "dc high": 64,
+        "dc_low": 28,     # 28-64%
+        "dc_high": 64,
     },
     "turnigy_2": {
         "position": "plate right",
         "frequency": 300,   # hz
-        "dc low": 28,     # 28-64%
-        "dc high": 64,
+        "dc_low": 28,     # 28-64%
+        "dc_high": 64,
     }
 }

@@ -84,7 +84,7 @@ class JoystickControl:
         
     def loop(self):
         uaslog.info("Starting Joystick Motor Control Test...")
-        uaslog.info("Joystick will control wheels to move forward or backward.")
+        uaslog.info("Joystick will control 4 wheels to move forward or backward.")
 
         try:
             while True:

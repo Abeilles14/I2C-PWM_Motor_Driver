@@ -94,14 +94,14 @@ class DriveTest:
                 raw_ljs_x = wpi.analogRead(PIN_LJSX)
                 raw_ljs_y = wpi.analogRead(PIN_LJSY)
 
-                self.ljs_x, self.ljs_y = remap_range(raw_ljs_x, raw_ljs_y)
+                ljs_x, ljs_y = remap_range(raw_ljs_x, raw_ljs_y)
 
-                if self.ljs_y < THRESHOLD_HIGH and self.ljs_y > THRESHOLD_LOW:
-                    self.ljs_y = 0.0
-                if self.ljs_x < THRESHOLD_HIGH and self.ljs_x > THRESHOLD_LOW:
-                    self.ljs_x = 0.0
+                if ljs_y < THRESHOLD_HIGH and ljs_y > THRESHOLD_LOW:
+                    ljs_y = 0.0
+                if ljs_x < THRESHOLD_HIGH and ljs_x > THRESHOLD_LOW:
+                    ljs_x = 0.0
                 
-                print(f"sX: {self.ljs_x:.4f}, sY: {self.ljs_y:.4f}")
+                print(f"sX: {ljs_x:.4f}, sY: {ljs_y:.4f}")
 
                 # SET MOTOR TARGETS
                 self.target_pololu = drive.setMotorTargets(self.ljs_x, self.ljs_y, self.rjs_x, self.target_pololu)
