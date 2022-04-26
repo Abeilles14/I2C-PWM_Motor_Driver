@@ -4,13 +4,13 @@ import math
 import logging
 import odroid_wiringpi as wpi
 from pwm import PWM
-from uas_control_system.constants import *
-from uas_control_system.motor_specs import MOTORS
-from uas_control_system.TB9051FTG import TB9051FTG
-from uas_control_system.PCA9685 import PCA9685
-from uas_control_system.utils import remap_range
-from uas_control_system.PID_controller import PID
-from uas_control_system.encoder import Encoder
+from constants import *
+from motor_specs import MOTORS
+from TB9051FTG import TB9051FTG
+from PCA9685 import PCA9685
+from utils import remap_range
+from PID_controller import PID
+from encoder import Encoder
 
 logging.getLogger("Adafruit_I2C.Device.Bus.{0}.Address.{1:#0X}".format(0, 0X40)).setLevel(logging.WARNING)
 logging.basicConfig(level=logging.DEBUG)
@@ -65,12 +65,12 @@ class PIDControl:
         
     def loop(self):
         uaslog.info("Starting PID Control Test...")
-        uaslog.info("Each Motor Will Move to Target 1500.")
+        uaslog.info("Each Motor Will Move to Target 2500.")
 
-        # self.target_pololu[1] = 1500
-        # self.target_pololu[2] = 1500
-        self.target_pololu[3] = 1500
-        # self.target_pololu[4] = 1500
+        # self.target_pololu[1] = 2500
+        # self.target_pololu[2] = 2500
+        self.target_pololu[3] = 2500
+        # self.target_pololu[4] = 2500
 
         try:
             while True:
@@ -103,7 +103,7 @@ class PIDControl:
                 
                 print(f"curr pos: [{self.pid_3.getPos()}, ]")
                 # print(f"curr pos: [{self.pid_1.getPos()}, {self.pid_2.getPos()}, {self.pid_3.getPos()}, {self.pid_4.getPos()}, ]")
-                
+
         except KeyboardInterrupt:
             uaslog.info("PID Control Test Complete!")
             self.cleanup()

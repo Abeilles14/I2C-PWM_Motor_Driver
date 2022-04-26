@@ -218,6 +218,7 @@ class UASDriver:
                 
                 elif self.mode == ControlMode.WINCH:
                     uaslog.debug("winch")
+                    
                     if self.ljs_y > 0.3:
                         self.pololu_0.forward(self.pwm, dutycycle=WINCH_DC_SPEED)
                     elif self.ljs_y < -0.3:
