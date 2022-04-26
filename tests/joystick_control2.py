@@ -82,41 +82,40 @@ class JoystickControl:
 
         uaslog.info("Motor Drive System init complete! Starting main routine...")
         
+    def setRemoteValues(self, buttonA, buttonB, buttonX, buttonY, ljs_x, ljs_y, ljs_sw, rjs_x, rjs_y, rjs_sw):
+        # joystick movement tolerance
+        if ljs_x < THRESHOLD_HIGH and ljs_x > THRESHOLD_LOW:
+            ljs_x = 0.0
+        if ljs_y < THRESHOLD_HIGH and ljs_y > THRESHOLD_LOW:
+            ljs_y = 0.0
+        if rjs_x < THRESHOLD_HIGH and rjs_x > THRESHOLD_LOW:
+            rjs_x = 0.0
+
+        self.buttonA = buttonA
+        self.buttonB = buttonB
+        self.buttonX = buttonX
+        self.buttonY = buttonY
+
+        self.ljs_x = ljs_x
+        self.ljs_y = ljs_y
+        self.ljs_sw = ljs_sw
+        self.rjs_x = rjs_x
+        self.rjs_y = rjs_y
+        self.rjs_sw = rjs_sw
+
+        uaslog.debug(f"lSW: {ljs_sw}, lX: {ljs_x}, lY: {ljs_y}, rX: {rjs_x}")
+    
     def loop(self):
         uaslog.info("Starting Joystick Motor Control Test...")
         uaslog.info("Joystick will control wheels to move forward or backward.")
 
         try:
             while True:
-
-                # button1 = wpi.digitalRead(PIN_A)
-                # button2 = wpi.digitalRead(PIN_B)
-                # # target position
-                # self.target_pololu[3] = 2000
-                # if not button1:
-                #     self.target_pololu[3] += 1
-                # elif not button2:
-                #     self.target_pololu[3] -= 1
-
-                
-                # READ JOYSTICK
-                raw_ljs_x = wpi.analogRead(PIN_LJSX)
-                raw_ljs_y = wpi.analogRead(PIN_LJSY)
-
-                self.ljs_x, self.ljs_y = remap_range(raw_ljs_x, raw_ljs_y)
-
-                if self.ljs_y < THRESHOLD_HIGH and self.ljs_y > THRESHOLD_LOW:
-                    self.ljs_y = 0.0
-                if self.ljs_x < THRESHOLD_HIGH and self.ljs_x > THRESHOLD_LOW:
-                    self.ljs_x = 0.0
-                
-                print(f"sX: {self.ljs_x:.4f}, sY: {self.ljs_y:.4f}")
-
                 # # SET MOTOR TARGETS
-                # self.target_pololu[1] += self.ljs_yljs_y
-                # self.target_pololu[2] += self.ljs_yljs_y
-                self.target_pololu[3] += self.ljs_yljs_y
-                # self.target_pololu[4] += self.ljs_yljs_y
+                # self.target_pololu[1] += self.ljs_y
+                # self.target_pololu[2] += self.ljs_y
+                self.target_pololu[3] += self.ljs_y
+                # self.target_pololu[4] += self.ljs_y
                 
                 print(f"target pos: [{self.target_pololu[3]:.4f}")
                 # print(f"target pos: [{self.target_pololu[1]:.4f}, {self.target_pololu[2]:.4f}, {self.target_pololu[3]:.4f}, {self.target_pololu[4]:.4f}]")
