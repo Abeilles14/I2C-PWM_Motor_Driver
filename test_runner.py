@@ -1,15 +1,17 @@
 import threading
+import sys
+from encoder import Encoder
 import odroid_wiringpi as wpi
 from utils import remap_range
 
-# from tests.motor_isolation import MotorIsolation
-# import tests.encoder_position
-# import tests.joystick_calibration
-# import tests.pid_control
-from tests.joystick_control2 import JoystickControl
-# import tests.drive_test
-# import tests.winch_control
-# import tests.claw_control
+from tests.motor_isolation import MotorIsolation
+from tests.encoder_position import EncoderPosition
+from tests.joystick_calibration import JoystickCalibration
+from tests.pid_control import PIDControl
+from tests.joystick_control import JoystickControl
+from tests.drive_test import DriveTest
+from tests.winch_control import WinchControl
+from tests.claw_control import ClawControl
 
 def main():
     PIN_A = 27
@@ -20,19 +22,38 @@ def main():
     PIN_LJSX = 25
     PIN_LJSY = 29
 
-    test = input("Select test to run:\n(1) Motor Isolation\n(2) Encoder Position\n(3) Joystick Calibration\n(4) PID Control\n \
-                (5) Joystick Control\n(6) Drive Test\n(7) Winch Control\n(8) Claw Control")
+    test = input("Select test to run:\n(1) Motor Isolation\n(2) Encoder Position\n(3) Joystick Calibration\n(4) PID Control\n(5) Joystick Control\n(6) Drive Test\n(7) Winch Control\n(8) Claw Control\n")
 
-    if test == 5:
+    wpi.wiringPiSetup()
+
+    if test == "1":
+        uastester = MotorIsolation()
+    elif test == "2":
+        uastester = EncoderPosition()
+    elif test == "3":
+        uastester = JoystickCalibration()
+    elif test == "4":
+        uastester = PIDControl()
+    elif test == "5":
         uastester = JoystickControl()
-        tester_thread = threading.Thread(target=uastester.loop)
-        tester_thread.start()
+    elif test == "6":
+        uastester = DriveTest()
+    elif test == "7":
+        uastester = WinchControl()
+    elif test == "8":
+        uastester = ClawControl()
+    else:
+        print("Enter a valid number >:(")
+        sys.exit(0)
+
+    tester_thread = threading.Thread(target=uastester.loop)
+    tester_thread.start()
 
     while True:
         buttonA = wpi.digitalRead(PIN_A)   # A
         buttonB = wpi.digitalRead(PIN_B)   # B
         buttonX = wpi.digitalRead(PIN_X)   # X
-        buttonY = wpi.digitalRead(PIN_Y)  # Y
+        buttonY = wpi.digitalRead(PIN_Y)   # Y
 
         raw_ljs_x = wpi.analogRead(PIN_LJSX)
         raw_ljs_y = wpi.analogRead(PIN_LJSY)

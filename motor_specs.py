@@ -27,7 +27,7 @@ MOTORS = {
     "pololu_4": {
         "position": "rear right",
         "frequency": 300, # 300 rpm
-        "enc_pins": [31, 11], # encA, encB
+        "enc_pins": [11, 31], # encA, encB
         "driver_pins": [12, 13], # dir, en
     },
     "actuonix_1": {
