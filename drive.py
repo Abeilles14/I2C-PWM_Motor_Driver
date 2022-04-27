@@ -7,23 +7,25 @@ def setMotorTargets(left_vrx, left_vry, right_vrx, target_pololu, debug=False):
     # VRX = Steering
 
     # set target forward/back for throttle
-    target_pololu[1] += left_vry
-    target_pololu[2] += left_vry
-    target_pololu[3] += left_vry
-    target_pololu[4] += left_vry
+    target_pololu[1] += left_vry * ACCEL_MULTIPLIER
+    target_pololu[2] += left_vry * ACCEL_MULTIPLIER
+    target_pololu[3] += left_vry * ACCEL_MULTIPLIER
+    target_pololu[4] += left_vry * ACCEL_MULTIPLIER
 
     if left_vrx > 0.0:
         # move right - decrease right motors speed, increase left
-        target_pololu[1] += left_vrx
-        target_pololu[2] -= left_vry
-        target_pololu[3] += left_vry
-        target_pololu[4] -= left_vry
+        target_pololu[1] -= left_vrx * ACCEL_MULTIPLIER
+        target_pololu[2] += left_vrx * ACCEL_MULTIPLIER
+        target_pololu[3] -= left_vrx * ACCEL_MULTIPLIER
+        target_pololu[4] += left_vrx * ACCEL_MULTIPLIER
     if left_vrx < 0.0:
         # move left - decrease left motors speed, increase right
-        target_pololu[1] -= left_vrx
-        target_pololu[2] += left_vry
-        target_pololu[3] -= left_vry
-        target_pololu[4] += left_vry
+        target_pololu[1] -= left_vrx * ACCEL_MULTIPLIER
+        target_pololu[2] += left_vrx * ACCEL_MULTIPLIER
+        target_pololu[3] -= left_vrx * ACCEL_MULTIPLIER
+        target_pololu[4] += left_vrx * ACCEL_MULTIPLIER
+
+    return target_pololu
 
     # controls FWD/BCK directions
     # target_pololu[1] += left_vry

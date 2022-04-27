@@ -84,13 +84,8 @@ class MotorIsolation:
         try:
             while True:
                 # freq and dc motor testing
-                print("Starting motor isolation loop")
-
-    
                 freq = 300
-                print("after freq")
                 dc = 60
-                print("after dc")
                 self.pwm.setPWMFreq(int(freq))
 
                 uaslog.info("Starting Motor Isolation Test...")
