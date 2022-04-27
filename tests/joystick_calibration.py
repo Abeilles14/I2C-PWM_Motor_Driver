@@ -27,24 +27,46 @@ PIN_LJSY = 29
         
 class JoystickCalibration:
     def __init__(self):
-
         ######################
         # INIT REMOTE VALUES #
         ######################
+        self.buttonA = 1
+        self.buttonB = 1
+        self.buttonX = 1
+        self.buttonY = 1
+
         self.ljs_x = 0.0
         self.ljs_y = 0.0
         self.ljs_sw = 1
         self.rjs_x = 0.0
         self.rjs_y = 0.0
         self.rjs_sw = 1
-
-        ##################
-        # INIT GPIO PINS #
-        ##################
-        self.init_gpio()
-
-        uaslog.info("Motor Drive System init complete! Starting main routine...")
         
+        uaslog.info("Motor Drive System init complete! Starting main routine...")
+    
+    def setRemoteValues(self, buttonA, buttonB, buttonX, buttonY, ljs_x, ljs_y, ljs_sw, rjs_x, rjs_y, rjs_sw):
+        # joystick movement tolerance
+        if ljs_x < THRESHOLD_HIGH and ljs_x > THRESHOLD_LOW:
+            ljs_x = 0.0
+        if ljs_y < THRESHOLD_HIGH and ljs_y > THRESHOLD_LOW:
+            ljs_y = 0.0
+        if rjs_x < THRESHOLD_HIGH and rjs_x > THRESHOLD_LOW:
+            rjs_x = 0.0
+
+        self.buttonA = buttonA
+        self.buttonB = buttonB
+        self.buttonX = buttonX
+        self.buttonY = buttonY
+
+        self.ljs_x = ljs_x
+        self.ljs_y = ljs_y
+        self.ljs_sw = ljs_sw
+        self.rjs_x = rjs_x
+        self.rjs_y = rjs_y
+        self.rjs_sw = rjs_sw
+
+        uaslog.debug(f"lSW: {ljs_sw}, lX: {ljs_x}, lY: {ljs_y}, rX: {rjs_x}")
+
     def loop(self):
         uaslog.info("Starting Joystick Motor Control Test...")
         uaslog.info("Joystick will control 4 wheels to move forward or backward.")
@@ -64,8 +86,8 @@ class JoystickCalibration:
                 
                 print(f"sX: {self.ljs_x:.4f}, sY: {self.ljs_y:.4f}")
 
-        except KeyboardInterrupt:
-            uaslog.info("Joystick Calibration Test Complete!")
+        except Exception as e:
+            uaslog.warning(f"{e}\nJoystick Calibration Test Complete.")
             sys.exit(0)
 
     def init_gpio(self):
@@ -88,6 +110,16 @@ class JoystickCalibration:
                 # init out pins low
                 wpi.digitalWrite(pin, 0)
             uaslog.info("Init GPIO complete!")
+    
+    def cleanup(self):
+        uaslog.info("Cleaning up driver system...")
+
+        # unexport pins
+        for pin in range(0, 256):
+            file = open("/sys/class/gpio/unexport","w")
+            file.write(str(pin))
+
+        uaslog.info("Driver system cleanup complete!")
 
 def main():
     test = JoystickCalibration()

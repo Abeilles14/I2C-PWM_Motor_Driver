@@ -62,6 +62,29 @@ class WinchControl:
 
         uaslog.info("Motor Drive System init complete! Starting main routine...")
     
+    def setRemoteValues(self, buttonA, buttonB, buttonX, buttonY, ljs_x, ljs_y, ljs_sw, rjs_x, rjs_y, rjs_sw):
+        # joystick movement tolerance
+        if ljs_x < THRESHOLD_HIGH and ljs_x > THRESHOLD_LOW:
+            ljs_x = 0.0
+        if ljs_y < THRESHOLD_HIGH and ljs_y > THRESHOLD_LOW:
+            ljs_y = 0.0
+        if rjs_x < THRESHOLD_HIGH and rjs_x > THRESHOLD_LOW:
+            rjs_x = 0.0
+
+        self.buttonA = buttonA
+        self.buttonB = buttonB
+        self.buttonX = buttonX
+        self.buttonY = buttonY
+
+        self.ljs_x = ljs_x
+        self.ljs_y = ljs_y
+        self.ljs_sw = ljs_sw
+        self.rjs_x = rjs_x
+        self.rjs_y = rjs_y
+        self.rjs_sw = rjs_sw
+
+        uaslog.debug(f"lSW: {ljs_sw}, lX: {ljs_x}, lY: {ljs_y}, rX: {rjs_x}")
+        
     def loop(self):
         uaslog.info("Starting Winch Control Test...")
         uaslog.info("Joystick will control winch motor to go up or down.")
@@ -87,8 +110,8 @@ class WinchControl:
                 else:
                     self.pololu_0.backward(self.pwm, dutycycle=0)
 
-        except KeyboardInterrupt:
-            uaslog.info("Joystick Control Test Complete!")
+        except Exception as e:
+            uaslog.warning(f"{e}\nWinch Control Test Complete.")
             self.cleanup()
             sys.exit(0)
 
@@ -124,3 +147,10 @@ class WinchControl:
             file.write(str(pin))
 
         uaslog.info("Driver system cleanup complete!")
+
+def main():
+    test = WinchControl()
+    test.loop()
+        
+if __name__ == "__main__":
+    main()

@@ -33,11 +33,14 @@ class ClawControl:
         ############################
         # INIT MOTOR TARGET VALUES #
         ############################
+        self.target_pololu = [0, 0, 0, 0, 0] # p0, p1, p2, p3, p4 = [w, fl, fr, rl, rr]
         self.target_actuator = [0, 0]  # a1, a2, a3, a4 = [vertical, horizontal]
         self.target_turnigy = [0] #t1, t2 = [in/out]
 
+        self.button_pressed = [1, 0, 0, 0]  # A B X Y
         self.ljs_pressed = False
         self.plate_closed = False
+        self.mode = ControlMode.IDLE
 
         ######################
         # INIT REMOTE VALUES #
@@ -98,6 +101,29 @@ class ClawControl:
 
         uaslog.info("Motor Drive System init complete! Starting main routine...")
     
+    def setRemoteValues(self, buttonA, buttonB, buttonX, buttonY, ljs_x, ljs_y, ljs_sw, rjs_x, rjs_y, rjs_sw):
+        # joystick movement tolerance
+        if ljs_x < THRESHOLD_HIGH and ljs_x > THRESHOLD_LOW:
+            ljs_x = 0.0
+        if ljs_y < THRESHOLD_HIGH and ljs_y > THRESHOLD_LOW:
+            ljs_y = 0.0
+        if rjs_x < THRESHOLD_HIGH and rjs_x > THRESHOLD_LOW:
+            rjs_x = 0.0
+
+        self.buttonA = buttonA
+        self.buttonB = buttonB
+        self.buttonX = buttonX
+        self.buttonY = buttonY
+
+        self.ljs_x = ljs_x
+        self.ljs_y = ljs_y
+        self.ljs_sw = ljs_sw
+        self.rjs_x = rjs_x
+        self.rjs_y = rjs_y
+        self.rjs_sw = rjs_sw
+
+        uaslog.debug(f"lSW: {ljs_sw}, lX: {ljs_x}, lY: {ljs_y}, rX: {rjs_x}")
+
     def loop(self):
         uaslog.info("Starting Claw Control Test...")
         uaslog.info("Joystick will control claw to extend, grab, and close plate.")
@@ -146,8 +172,8 @@ class ClawControl:
 
                     self.ljs_pressed = False
 
-        except KeyboardInterrupt:
-            uaslog.info("Claw Control Test Complete!")
+        except Exception as e:
+            uaslog.warning(f"{e}\nClaw Control Test Complete.")
             self.cleanup()
             sys.exit(0)
 
@@ -174,17 +200,23 @@ class ClawControl:
 
     def cleanup(self):
         uaslog.info("Cleaning up driver system...")
+
         # reset motors
-        self.actuonix_1.reset(self.pwm)
-        self.actuonix_2.reset(self.pwm)
-        self.actuonix_3.reset(self.pwm)
-        self.actuonix_4.reset(self.pwm)
-        self.turnigy_1.reset(self.pwm)
-        self.turnigy_2.reset(self.pwm)
-        
+        self.pololu_1.reset(self.pwm)
+        self.pololu_2.reset(self.pwm)
+        self.pololu_3.reset(self.pwm)
+        self.pololu_4.reset(self.pwm)
+
         # unexport pins
         for pin in range(0, 256):
             file = open("/sys/class/gpio/unexport","w")
             file.write(str(pin))
-
+        
         uaslog.info("Driver system cleanup complete!")
+
+def main():
+    test = ClawControl()
+    test.loop()
+        
+if __name__ == "__main__":
+    main()

@@ -171,8 +171,8 @@ class DriveTest:
                 
                 print(f"curr pos: [{self.pid_1.getPos()}, {self.pid_2.getPos()}, {self.pid_3.getPos()}, {self.pid_4.getPos()}, ]")
                 
-        except Exception as e:
-            uaslog.warning(f"{e}\nDrive Test Complete.")
+        except KeyboardInterrupt:
+            uaslog.info("Drive Test Complete!")
             self.cleanup()
             sys.exit(0)
 
@@ -200,19 +200,11 @@ class DriveTest:
 
     def cleanup(self):
         uaslog.info("Cleaning up driver system...")
-
         # reset motors
         self.pololu_1.reset(self.pwm)
         self.pololu_2.reset(self.pwm)
         self.pololu_3.reset(self.pwm)
         self.pololu_4.reset(self.pwm)
-
-        # unexport pins
-        for pin in range(0, 256):
-            file = open("/sys/class/gpio/unexport","w")
-            file.write(str(pin))
-        
-        uaslog.info("Driver system cleanup complete!")
 
 def main():
     test = DriveTest()
