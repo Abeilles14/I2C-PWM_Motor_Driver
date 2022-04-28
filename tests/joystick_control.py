@@ -112,23 +112,24 @@ class JoystickControl:
         try:
             while True:
                 # READ JOYSTICK
-                raw_ljs_x = wpi.analogRead(PIN_LJSX)
-                raw_ljs_y = wpi.analogRead(PIN_LJSY)
+                # raw_ljs_x = wpi.analogRead(PIN_LJSX)
+                # raw_ljs_y = wpi.analogRead(PIN_LJSY)
 
-                self.ljs_x, self.ljs_y = remap_range(raw_ljs_x, raw_ljs_y)
+                # self.ljs_x, self.ljs_y = remap_range(raw_ljs_x, raw_ljs_y)
 
-                if self.ljs_y < THRESHOLD_HIGH and self.ljs_y > THRESHOLD_LOW:
-                    self.ljs_y = 0.0
-                if self.ljs_x < THRESHOLD_HIGH and self.ljs_x > THRESHOLD_LOW:
-                    self.ljs_x = 0.0
+                # if self.ljs_y < THRESHOLD_HIGH and self.ljs_y > THRESHOLD_LOW:
+                #     self.ljs_y = 0.0
+                # if self.ljs_x < THRESHOLD_HIGH and self.ljs_x > THRESHOLD_LOW:
+                #     self.ljs_x = 0.0
                 
-                print(f"sX: {self.ljs_x:.4f}, sY: {self.ljs_y:.4f}")
+                # print(f"sX: {self.ljs_x:.4f}, sY: {self.ljs_y:.4f}")
 
                 # SET MOTOR TARGETS
-                self.target_pololu[1] += self.ljs_y * ACCEL_MULTIPLIER
+                # set 1 and 4 reverse due to wheel orientation.
+                self.target_pololu[1] -= self.ljs_y * ACCEL_MULTIPLIER
                 self.target_pololu[2] += self.ljs_y * ACCEL_MULTIPLIER
                 self.target_pololu[3] += self.ljs_y * ACCEL_MULTIPLIER
-                self.target_pololu[4] += self.ljs_y * ACCEL_MULTIPLIER
+                self.target_pololu[4] -= self.ljs_y * ACCEL_MULTIPLIER
                 
                 # print(f"target pos: [{self.target_pololu[1]:.4f}]")
                 print(f"target pos: [{self.target_pololu[1]:.4f}, {self.target_pololu[2]:.4f}, {self.target_pololu[3]:.4f}, {self.target_pololu[4]:.4f}]")
@@ -162,8 +163,8 @@ class JoystickControl:
                 # print(f"curr pos: [{self.pid_1.getPos()}]")
                 print(f"curr pos: [{self.pid_1.getPos()}, {self.pid_2.getPos()}, {self.pid_3.getPos()}, {self.pid_4.getPos()}, ]")
                 
-        except Exception as e:
-            uaslog.warning(f"{e}\nJoystick Control Test Complete.")
+        except KeyboardInterrupt:
+            uaslog.info("Joystick Control Test Complete!")
             self.cleanup()
             sys.exit(0)
 

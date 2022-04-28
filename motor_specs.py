@@ -7,25 +7,25 @@ MOTORS = {
         "driver_pins": [21, 22], # pwm1, pwm2
     },
     "pololu_1": {
-        "position": "front left",
+        "position": "rear left",
         "frequency": 300, # 300 rpm
         "enc_pins": [15,16], # encA, encB
         "driver_pins": [0, 7], # dir, en
     },
     "pololu_2": {
-        "position": "front right",
+        "position": "front left",
         "frequency": 300, # 300 rpm
         "enc_pins": [1, 4], # encA, encB
         "driver_pins": [2, 3], # dir, en
     },
     "pololu_3": {
-        "position": "rear left",
+        "position": "rear right",
         "frequency": 300, # 300 rpm
         "enc_pins": [5, 6], # encA, encB
         "driver_pins": [30, 14], # dir, en
     },
     "pololu_4": {
-        "position": "rear right",
+        "position": "front right",
         "frequency": 300, # 300 rpm
         "enc_pins": [11, 31], # encA, encB
         "driver_pins": [12, 13], # dir, en

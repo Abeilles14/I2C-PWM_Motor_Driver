@@ -100,10 +100,10 @@ class PIDControl:
         uaslog.info("Starting PID Control Test...")
         uaslog.info("Each Motor Will Move to Target 2500.")
 
-        self.target_pololu[1] = 2500
+        self.target_pololu[1] = -2500
         self.target_pololu[2] = 2500
         self.target_pololu[3] = 2500
-        self.target_pololu[4] = 2500
+        self.target_pololu[4] = -2500
 
         try:
             while True:

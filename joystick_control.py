@@ -125,10 +125,11 @@ class JoystickControl:
                 print(f"sX: {self.ljs_x:.4f}, sY: {self.ljs_y:.4f}")
 
                 # SET MOTOR TARGETS
-                self.target_pololu[1] += self.ljs_y * ACCEL_MULTIPLIER
+                # set 1 and 4 reverse due to wheel orientation.
+                self.target_pololu[1] -= self.ljs_y * ACCEL_MULTIPLIER
                 self.target_pololu[2] += self.ljs_y * ACCEL_MULTIPLIER
                 self.target_pololu[3] += self.ljs_y * ACCEL_MULTIPLIER
-                self.target_pololu[4] += self.ljs_y * ACCEL_MULTIPLIER
+                self.target_pololu[4] -= self.ljs_y * ACCEL_MULTIPLIER
                 
                 # print(f"target pos: [{self.target_pololu[1]:.4f}]")
                 print(f"target pos: [{self.target_pololu[1]:.4f}, {self.target_pololu[2]:.4f}, {self.target_pololu[3]:.4f}, {self.target_pololu[4]:.4f}]")

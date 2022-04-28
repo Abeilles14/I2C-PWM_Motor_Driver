@@ -7,17 +7,17 @@ def setMotorTargets(left_vrx, left_vry, right_vrx, target_pololu, debug=False):
     # VRX = Steering
 
     # set target forward/back for throttle
-    target_pololu[1] += left_vry * ACCEL_MULTIPLIER
+    target_pololu[1] -= left_vry * ACCEL_MULTIPLIER
     target_pololu[2] += left_vry * ACCEL_MULTIPLIER
     target_pololu[3] += left_vry * ACCEL_MULTIPLIER
-    target_pololu[4] += left_vry * ACCEL_MULTIPLIER
+    target_pololu[4] -= left_vry * ACCEL_MULTIPLIER
 
     if left_vrx > 0.0:
         # move right - decrease right motors speed, increase left
-        target_pololu[1] -= left_vrx * ACCEL_MULTIPLIER
-        target_pololu[2] += left_vrx * ACCEL_MULTIPLIER
-        target_pololu[3] -= left_vrx * ACCEL_MULTIPLIER
-        target_pololu[4] += left_vrx * ACCEL_MULTIPLIER
+        target_pololu[1] -= left_vrx * ACCEL_MULTIPLIER #RL
+        target_pololu[2] += left_vrx * ACCEL_MULTIPLIER #FL
+        target_pololu[3] -= left_vrx * ACCEL_MULTIPLIER #RR
+        target_pololu[4] += left_vrx * ACCEL_MULTIPLIER #FR
     if left_vrx < 0.0:
         # move left - decrease left motors speed, increase right
         target_pololu[1] -= left_vrx * ACCEL_MULTIPLIER
@@ -26,56 +26,6 @@ def setMotorTargets(left_vrx, left_vry, right_vrx, target_pololu, debug=False):
         target_pololu[4] += left_vrx * ACCEL_MULTIPLIER
 
     return target_pololu
-
-    # controls FWD/BCK directions
-    # target_pololu[1] += left_vry
-    # target_pololu[2] += left_vry
-    # target_pololu[3] += left_vry
-    # target_pololu[4] += left_vry
-
-    # controls L/R side of rover
-    # if left_vry > 0:
-    #     # forward
-    #     if left_vrx > 0:
-    #         if debug:
-    #             print("forward right")
-    #         # right
-    #         # slow down the right wheels only
-    #         # target_pololu[1] += left_vrx
-    #         target_pololu[2] += left_vrx
-    #         # target_pololu[3] += left_vrx
-    #         target_pololu[4] += left_vrx
-    #     elif left_vrx < 0:
-    #         if debug:
-    #             print("forward left")
-    #         # left
-    #         # slow down the left wheels only
-    #         target_pololu[1] += left_vrx
-    #         # target_pololu[2] += left_vrx
-    #         target_pololu[3] += left_vrx
-    #         # target_pololu[4] += left_vrx
-    # elif left_vry < 0:
-    #     # backward
-    #     if left_vrx > 0:
-    #         if debug:
-    #             print("back right")
-    #         # right
-    #         # slow down the right wheels only
-    #         # target_pololu[1] += left_vrx
-    #         target_pololu[2] += left_vrx
-    #         # target_pololu[3] += left_vrx
-    #         target_pololu[4] += left_vrx
-    #     elif left_vrx < 0:
-    #         if debug:
-    #             print("back left")
-    #         # left
-    #         # slow down the left wheels only
-    #         target_pololu[1] -= left_vrx
-    #         # target_pololu[2] += left_vrx
-    #         target_pololu[3] -= left_vrx
-    #         # target_pololu[4] += left_vrx
-    
-    # return target_pololu
 
 # def setSpinMotorTargets(trigger_l, trigger_r, target_pololu):
 #     if trigger_l > 0.2:
