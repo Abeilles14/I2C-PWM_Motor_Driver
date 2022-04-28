@@ -42,7 +42,8 @@ def main():
             ljs_x, ljs_y = remap_range(raw_ljs_x, raw_ljs_y)
 
             uasdriver.setRemoteValues(buttonA, buttonB, buttonX, buttonY, ljs_x, ljs_y, 1, 0.0, 0.0, 1)
-    except KeyboardInterrupt:
+    except Exception as e:
+        print(f"{e}\nExiting UAS Driver Runner.")
         uasdriver.cleanup()
         sys.exit(0)
 

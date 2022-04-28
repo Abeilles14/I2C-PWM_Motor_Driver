@@ -90,14 +90,14 @@ class ClawControl:
         self.actuonix_4.reset(self.pwm)
         self.actuonix_4.setPWM(self.pwm, dutycycle=30)
         
-        # SERVO
-        self.turnigy_1 = PCA9685(channel=CHANNEL12, freq=300)
-        self.turnigy_1.reset(self.pwm)
-        self.turnigy_1.setPWM(self.pwm, dutycycle=28)
+        # # SERVO
+        # self.turnigy_1 = PCA9685(channel=CHANNEL12, freq=300)
+        # self.turnigy_1.reset(self.pwm)
+        # self.turnigy_1.setPWM(self.pwm, dutycycle=28)
 
-        self.turnigy_2 = PCA9685(channel=CHANNEL13, freq=300)
-        self.turnigy_2.reset(self.pwm)
-        self.turnigy_2.setPWM(self.pwm, dutycycle=28)
+        # self.turnigy_2 = PCA9685(channel=CHANNEL13, freq=300)
+        # self.turnigy_2.reset(self.pwm)
+        # self.turnigy_2.setPWM(self.pwm, dutycycle=28)
 
         uaslog.info("Motor Drive System init complete! Starting main routine...")
     
@@ -160,17 +160,17 @@ class ClawControl:
                     self.actuonix_4.setPWM(self.pwm, dutycycle=self.target_actuator[1] + ACTUATOR_DC_MIN)
                     time.sleep(0.08)
 
-                if self.ljs_pressed:
-                    if self.plate_closed:
-                        self.plate_closed = False
-                        self.turnigy_1.setPWM(self.pwm, dutycycle=MOTORS["turnigy_1"]["dc_low"])
-                        self.turnigy_2.setPWM(self.pwm, dutycycle=MOTORS["turnigy_1"]["dc_low"])
-                    elif not self.plate_closed:
-                        self.plate_closed = True
-                        self.turnigy_1.setPWM(self.pwm, dutycycle=MOTORS["turnigy_1"]["dc_high"])
-                        self.turnigy_2.setPWM(self.pwm, dutycycle=MOTORS["turnigy_1"]["dc_high"])
+                # if self.ljs_pressed:
+                #     if self.plate_closed:
+                #         self.plate_closed = False
+                #         self.turnigy_1.setPWM(self.pwm, dutycycle=MOTORS["turnigy_1"]["dc_low"])
+                #         self.turnigy_2.setPWM(self.pwm, dutycycle=MOTORS["turnigy_1"]["dc_low"])
+                #     elif not self.plate_closed:
+                #         self.plate_closed = True
+                #         self.turnigy_1.setPWM(self.pwm, dutycycle=MOTORS["turnigy_1"]["dc_high"])
+                #         self.turnigy_2.setPWM(self.pwm, dutycycle=MOTORS["turnigy_1"]["dc_high"])
 
-                    self.ljs_pressed = False
+                #     self.ljs_pressed = False
 
         except Exception as e:
             uaslog.warning(f"{e}\nClaw Control Test Complete.")
@@ -200,12 +200,13 @@ class ClawControl:
 
     def cleanup(self):
         uaslog.info("Cleaning up driver system...")
-
         # reset motors
-        self.pololu_1.reset(self.pwm)
-        self.pololu_2.reset(self.pwm)
-        self.pololu_3.reset(self.pwm)
-        self.pololu_4.reset(self.pwm)
+        self.actuonix_1.reset(self.pwm)
+        self.actuonix_2.reset(self.pwm)
+        self.actuonix_3.reset(self.pwm)
+        self.actuonix_4.reset(self.pwm)
+        # self.turnigy_1.reset(self.pwm)
+        # self.turnigy_2.reset(self.pwm)
 
         # unexport pins
         for pin in range(0, 256):
