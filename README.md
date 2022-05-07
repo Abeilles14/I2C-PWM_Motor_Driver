@@ -16,7 +16,8 @@ The Ground Electrical and Control System for UBC UAS Ataksak drone interfacing w
 
 ## System Schematics and Wiring
 The system consists of:  
-* 1 Odroid XU4 Single Board Computer
+* 1 Laptop (Ground Control)
+* 1 Odroid XU4 Single Board Computer (Sky Control)
 * 2 TB9051FTG Dual Channel Brushed Motor Drivers for the Mecanum Drive
 * 1 Single TB9041FTG Single Channel Brushed Motor Driver for the Winch Motor
 * 1 16-Channel PCA9685 I2C-PWM Driver
@@ -27,7 +28,7 @@ The system consists of:
 * 3S Lipo Battery
 * Low Pass Filters to filter out noise on encoder channels
 * 5V Rails
-A full (sketchy handrawn :D ) schematics of the wire connections and boards is shown here: 
+A full (sketchy and handrawn) schematics of the wire connections and boards is shown here: https://github.com/Abeilles14/uas_control_system/blob/main/Schematics%20%26%20Connections%20Rev%20A.pdf  
 
 ## System Integration Test Suite
 A complete test suite testing each individual component of the system in isolation was created. See here for test descriptions, debugging tips, and when to use them: https://github.com/Abeilles14/uas_control_system/blob/main/tests/README.md  
@@ -38,8 +39,8 @@ An SSH tunnel is first opened on Ground Control for port forwarding. The GroundS
 All SSH functions are managed by VPS on Termius for convenience.  
 
 ### Requirements and Libraries
-adafruit-blinka
-adafruit-extended-bus
-Adafruit_GPIO
-i2c-tools
+adafruit-blinka  
+adafruit-extended-bus  
+Adafruit_GPIO  
+i2c-tools  
 
