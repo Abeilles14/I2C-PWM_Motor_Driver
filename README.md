@@ -28,6 +28,7 @@ The system consists of:
 * 3S Lipo Battery
 * Low Pass Filters to filter out noise on encoder channels
 * 5V Rails  
+
 A full (sketchy and handrawn) schematics of the wire connections and boards is shown here: https://github.com/Abeilles14/uas_control_system/blob/main/Schematics%20%26%20Connections%20Rev%20A.pdf  
 
 ## System Integration Test Suite
