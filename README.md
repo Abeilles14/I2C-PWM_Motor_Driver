@@ -1,6 +1,8 @@
 # UBC UAS Ground Control System - AEAC 2022 Competition
 The Ground Electrical and Control System for UBC UAS Ataksak drone interfacing with an Odroid XU4. Includes PID controllers for a mecanum drive landing gear, winch, and claw controlled by an Xbox Remote.  
 
+https://user-images.githubusercontent.com/40010108/207993107-5fe9de38-c3b1-43a6-a13a-24c181524b8e.mp4
+
 ## XBox Controls
 ### Modes: 
 * **BTN A: Drive**
@@ -45,3 +47,6 @@ adafruit-extended-bus
 Adafruit_GPIO  
 i2c-tools  
 
+![IMG_3671](https://user-images.githubusercontent.com/40010108/207992135-bdfbe539-b0cf-4a23-87d8-63f588b4aba2.jpg)
+
+*The UBC UAS AEAC Team 2022*
